@@ -1,0 +1,41 @@
+{
+  "name": "ecs-path",
+  "version": "1.0.0",
+  "description": "system for handling bezier and polygon path",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "karma start"
+  },
+  "keywords": [
+    "path",
+    "bezier",
+    "ecs"
+  ],
+  "author": "jWA86",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.1.2",
+    "@types/gl-matrix": "^2.4.0",
+    "@types/mocha": "^2.2.48",
+    "@types/node": "^9.4.6",
+    "chai": "^4.1.2",
+    "es6-shim": "^0.35.3",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-cli": "^1.0.1",
+    "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-typescript": "^3.0.12",
+    "mocha": "^5.0.1",
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.7.1",
+    "webpack": "^3.11.0"
+  },
+  "dependencies": {
+    "ecs-framework": "^0.4.12",
+    "gl-matrix": "^2.4.0"
+  }
+}
