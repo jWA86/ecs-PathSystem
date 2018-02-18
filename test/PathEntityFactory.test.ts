@@ -65,18 +65,26 @@ describe("PathEntityFactory ", () => {
             expect(vec2.distance(fopt, points[3])).to.equal(0);
         });
         it("return a PathComponent", () => {
-
-        });
-        it("if the entity already exist it should fire an error", () =>{
-
-        });
-        it("if the number of points provided are < 1 it should fire an error", () =>{
+            let res:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
+            expect(res instanceof PathComponent).to.equal(true);
             
         });
+        it("if the entity already exist it should fire an error", () =>{
+            let path1:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
+            try {
+                let path2:any = entityFactory.create(1, [vec2.fromValues(2.0, 2.0)], pathType.cubicBezier, defaultStyle);
+            }catch(e) {
+                expect(e instanceof Error).to.equal(true);
+            }
+        });
+        it("if the number of points provided are < 1 it should fire an error", () =>{
+            try {
+                let path1:any = entityFactory.create(1, [], pathType.polyline, defaultStyle);
+            }catch(e) {
+                expect(e instanceof Error).to.equal(true);
+            }
+        });
     });
-
-});
-describe("Compound path", () => {
 
 });
 

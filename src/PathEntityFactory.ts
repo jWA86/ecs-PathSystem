@@ -20,7 +20,7 @@ class PathEntityFactory {
         this.pathPool = pathPool || new ComponentFactory<PathComponent>(pathPoolSize, PathComponent, pathType.polyline, 0, 0, this.defaultStyle);
         this.pointPool = pointPool || new ComponentFactory<PointComponent>(pointPoolSize, PointComponent, vec2.fromValues(0.0, 0.0));
     }
-    public create(entityId: number, points:vec2[], type: pathType, style: IPathStyle = this.defaultStyle) {
+    public create(entityId: number, points:vec2[], type: pathType, style: IPathStyle = this.defaultStyle) : PathComponent {
         if(points.length<1){throw new Error("a path mush have at least 1 point");}
         if(this.pathPool.has(entityId)){throw new Error("a path entity with this Id already exist");}
         const firstPointId = this.pathPool.nbCreated + 1;
@@ -37,6 +37,6 @@ class PathEntityFactory {
         Object.keys(style).forEach((k) => {
             c.style[k] = style[k];
         });
-
+        return c;
     }
 }
