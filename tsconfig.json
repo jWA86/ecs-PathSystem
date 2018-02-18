@@ -5,7 +5,7 @@
       "outDir": "js",
       "sourceMap": true,
       "watch":true,
-      "allowJs": true,
+      "declaration": true,
       "lib": [
         "es5",
         "es6",

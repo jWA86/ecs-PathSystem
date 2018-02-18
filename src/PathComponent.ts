@@ -3,7 +3,7 @@ import { mat4, vec2 } from "gl-matrix";
 export {IPathStyle, PathComponent, pathType}
 
 enum pathType {
-    line,
+    polyline,
     cubicBezier,
 }
 
