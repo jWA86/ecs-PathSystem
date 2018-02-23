@@ -69,26 +69,26 @@ describe("PathEntityFactory ", () => {
             expect(res instanceof PathComponent).to.equal(true);
             
         });
-        it("if the entity already exist it should fire an error", () =>{
-            let path1:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
-            try {
-                let path2:any = entityFactory.create(1, [vec2.fromValues(2.0, 2.0)], pathType.cubicBezier, defaultStyle);
-            }catch(e) {
-                expect(e instanceof Error).to.equal(true);
-            }
-        });
+        // it("if the entity already exist it should fire an error", () =>{
+        //     let path1:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
+        //     try {
+        //         let path2:any = entityFactory.create(1, [vec2.fromValues(2.0, 2.0)], pathType.cubicBezier, defaultStyle);
+        //     }catch(e) {
+        //         expect(e instanceof Error).to.equal(true);
+        //     }
+        // });
         it("if the number of points provided are < 1 it should fire an error", () =>{
             try {
                 let path1:any = entityFactory.create(1, [], pathType.polyline, defaultStyle);
-            }catch(e) {
+            } catch(e) {
                 expect(e instanceof Error).to.equal(true);
             }
         });
     });
+    describe("get() should", () => {
+        it("return the Path Component with the id provided", () => {
+
+        });
+    });
 
 });
-
-// factory -> create necessary PathComponent Pool 
-//         -> create necessary PointsComponent Pool
-// or get it as arguments
-// PathEntityFactory 

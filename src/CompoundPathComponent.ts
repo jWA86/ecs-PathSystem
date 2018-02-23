@@ -8,3 +8,4 @@ class CompoundPathComponent implements IComponent {
            public nbPath: number){
     }
 }
+// to add lenght
