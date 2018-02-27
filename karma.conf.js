@@ -12,7 +12,7 @@ module.exports = function(config) {
         },
         reporters: ["progress", "karma-typescript", "coverage"],
 
-        browsers: ["Chrome", "Firefox", "IE", "PhantomJS"],
+        browsers: ["Chrome", "Firefox", "IE", "PhantomJS", "Safari"],
         
         coverageReporter: {
             type : 'html',

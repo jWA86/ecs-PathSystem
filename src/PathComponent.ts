@@ -1,6 +1,6 @@
 import { IComponent } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
-export {IPathStyle, PathComponent, pathType}
+export { IPathStyle, PathComponent, pathType };
 
 enum pathType {
     polyline,
@@ -15,11 +15,7 @@ interface IPathStyle {
 }
 
 class PathComponent implements IComponent {
-    constructor(public entityId: number, public active: boolean,
-         public type: pathType,
-          public firstPtId: number,
-           public nbPt: number, 
-            public style: IPathStyle){
+    constructor(public entityId: number, public active: boolean, public type: pathType, public firstPtId: number, public nbPt: number, public style: IPathStyle) {
 
     }
 }

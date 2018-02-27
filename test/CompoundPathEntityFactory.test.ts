@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import "mocha";
 import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
-import { PathComponent, pathType, IPathStyle } from "../src/PathComponent";
+import "mocha";
+import { CompoundPathComponent } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
+import { IPathStyle, PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
-import { CompoundPathComponent } from "../src/CompoundPathComponent";
 
 describe("CompoundPathEntityFactory ", () => {
     let defaultStyle: IPathStyle;
@@ -21,7 +21,7 @@ describe("CompoundPathEntityFactory ", () => {
 
             const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, CompoundPathComponent, true, 0, 0);
 
-            const compoundEntityFactory = new CompoundPathEntityFactory(0, 0, 0, compoundPathFactory, pathEntityFactory)
+            const compoundEntityFactory = new CompoundPathEntityFactory(0, 0, 0, compoundPathFactory, pathEntityFactory );
             expect(compoundEntityFactory.pathEntityFactory).to.equal(pathEntityFactory);
             expect(compoundEntityFactory.componentPool).to.equal(compoundPathFactory);
         });
@@ -56,11 +56,11 @@ describe("CompoundPathEntityFactory ", () => {
                 const res = compoundEntityFactory.create(1);
                 expect(res instanceof CompoundPathComponent).to.equal(true);
             });
-            it("create a component path with the path component provided", () => {
+            it("create a CompoundPath component from list of path component", () => {
                 const pathEntityFactory = new PathEntityFactory(100, 10);
                 const p1 = pathEntityFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                 const p2 = pathEntityFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const res = compoundEntityFactory.create(1, [p1, p2]);
+                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, [p1.entityId, p2.entityId]);
                 expect(res.firstPathId).to.equal(1);
                 expect(res.nbPath).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(2);
@@ -68,7 +68,9 @@ describe("CompoundPathEntityFactory ", () => {
             });
         });
         describe("createPathAt() should", () => {
-            it("")
+            it("", () => {
+
+            });
             it("create a path and insert it at the end of the compound path if no pathId is provided", () => {
                 // expect(compoundEntityFactory.componentPool.nbCreated).to.equal(0);
                 // expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(0);
@@ -82,10 +84,10 @@ describe("CompoundPathEntityFactory ", () => {
                 // compoundEntityFactory.createPathAt(res.entityId, cubicBezierPts, pathType.cubicBezier);
                 // expect(res.firstPathId).to.equal(1);
                 // expect(res.nbPath).to.equal(1);
-                
+
                 // expect(compoundEntityFactory.pathEntityFactory.pathPool.get(1).firstPtId).to.equal(1);
                 // expect(compoundEntityFactory.pathEntityFactory.pathPool.get(1).nbPt).to.equal(cubicBezierPts.length);
-                //     // have to check with a path in the middle of the pool 
+                //     // have to check with a path in the middle of the pool
             });
         });
     });

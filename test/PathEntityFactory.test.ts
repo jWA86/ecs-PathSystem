@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import "mocha";
 import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
-import { PathComponent, pathType, IPathStyle } from "../src/PathComponent";
+import "mocha";
+import { IPathStyle, PathComponent, pathType  } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
 
@@ -55,19 +55,19 @@ describe("PathEntityFactory ", () => {
             expect(c.style.lineWidth).to.equal(defaultStyle.lineWidth);
             expect(c.style.strokeStyle).to.equal(defaultStyle.strokeStyle);
             // checking that points are created in the point pool
-            let fpt = entityFactory.pointPool.get(1).point;
+            const fpt = entityFactory.pointPool.get(1).point;
             expect(vec2.distance(fpt, points[0])).to.equal(0);
-            let spt = entityFactory.pointPool.get(2).point;
+            const spt = entityFactory.pointPool.get(2).point;
             expect(vec2.distance(spt, points[1])).to.equal(0);
-            let tpt = entityFactory.pointPool.get(3).point;
+            const tpt = entityFactory.pointPool.get(3).point;
             expect(vec2.distance(tpt, points[2])).to.equal(0);
-            let fopt = entityFactory.pointPool.get(4).point;
+            const fopt = entityFactory.pointPool.get(4).point;
             expect(vec2.distance(fopt, points[3])).to.equal(0);
         });
         it("return a PathComponent", () => {
-            let res:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
+            const res: any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
             expect(res instanceof PathComponent).to.equal(true);
-            
+            expect(res.entityId).to.equal(1);
         });
         // it("if the entity already exist it should fire an error", () =>{
         //     let path1:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
@@ -77,17 +77,28 @@ describe("PathEntityFactory ", () => {
         //         expect(e instanceof Error).to.equal(true);
         //     }
         // });
-        it("if the number of points provided are < 1 it should fire an error", () =>{
+        it("if the number of points provided are < 1 it should fire an error", () => {
             try {
-                let path1:any = entityFactory.create(1, [], pathType.polyline, defaultStyle);
-            } catch(e) {
+                const path1: any = entityFactory.create(1, [], pathType.polyline, defaultStyle);
+            } catch (e) {
                 expect(e instanceof Error).to.equal(true);
             }
         });
     });
-    describe("get() should", () => {
-        it("return the Path Component with the id provided", () => {
+    describe("get ", () => {
+        it("getPathComponent should return the Path Component with the id provided", () => {
+            const entityFactory = new PathEntityFactory(100, 10);
+            entityFactory.create(1, [vec2.create()], pathType.polyline);
+            entityFactory.create(2, [vec2.create()], pathType.cubicBezier);
+            expect(entityFactory.getPathComponent(2).type).to.equal(pathType.cubicBezier);
 
+        });
+        it("getLastPathId should return the id of the last path component in the pool, so we can work with incremental id", () => {
+            const entityFactory = new PathEntityFactory(100, 10);
+            entityFactory.create(3, [vec2.create()], pathType.polyline);
+            entityFactory.create(1, [vec2.create()], pathType.cubicBezier);
+            expect(entityFactory.pathPool.nbCreated).to.equal(2);
+            expect(entityFactory.getLastPathId()).to.equal(1);
         });
     });
 
