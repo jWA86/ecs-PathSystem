@@ -67,7 +67,7 @@ class CompoundPathEntityFactory {
             const path = inputPathFactory.getPathComponent(id);
             const fromIndex = inputPathFactory.pointPool.keys.get(path.firstPtId);
             const firstPtId = this.pathEntityFactory.pointPool.nbCreated + 1;
-            let newId = firstPtId;
+            let newId = firstPtId - 1;
             // copy points
             for (let i = fromIndex; i < fromIndex + path.nbPt; ++i) {
                 newId += 1;
