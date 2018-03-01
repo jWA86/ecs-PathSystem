@@ -24,14 +24,15 @@ describe( "Renderer", () => {
         mockHtml = '<canvas id="canvas" width="800" height="600"></canvas>';
         document.body.innerHTML = mockHtml;
         bufferPathFactory = new PathEntityFactory(1000, 100);
-        bufferPathFactory.defaultStyle.lineWidth = 2;
+        bufferPathFactory.defaultStyle.lineWidth = 5;
         bufferPathFactory.defaultStyle.strokeStyle = "red";
+        bufferPathFactory.defaultStyle.lineCap = "square";
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
     });
 
     describe("polyline path", () => {
-        const segmentPts1 = [vec2.fromValues(0.0, 10.0), vec2.fromValues(10.0, 10.0), vec2.fromValues(20.0, 10.0), vec2.fromValues(30.0, 20.0)];
+        const segmentPts1 = [vec2.fromValues(0.0, 0.0), vec2.fromValues(100.0, 100.0), vec2.fromValues(200.0, 100.0), vec2.fromValues(300.0, 200.0)];
         const segmentPts2 = [vec2.fromValues(0.0, 30.0), vec2.fromValues(10.0, 20.0), vec2.fromValues(20.0, 10.0), vec2.fromValues(30.0, 0.0)];
         it("render a polyline path from a compoundPath component", () => {
             const cId = 1;
@@ -46,10 +47,8 @@ describe( "Renderer", () => {
             renderSys.process();
 
             expect(cPool.pathEntityFactory.getPathComponent(cPool.componentPool.get(cId).firstPathId).style.strokeStyle).to.equal("red");
-            let data = ctx.getImageData(100, 100, 1, 1); // nothing is supposed to be drawn here
-            refImgPixelColorChecking(data, 0, 0, 0, 0);
             // checking that ctrl points are drown on the canvas
-            data = ctx.getImageData(segmentPts1[0][0], segmentPts1[0][1], 1, 1);
+            let data = ctx.getImageData(segmentPts1[0][0], segmentPts1[0][1], 1, 1);
             refImgPixelColorChecking(data, 255, 0, 0, 255);
             data = ctx.getImageData(segmentPts1[1][0], segmentPts1[1][1], 1, 1);
             refImgPixelColorChecking(data, 255, 0, 0, 255);
@@ -58,27 +57,29 @@ describe( "Renderer", () => {
             data = ctx.getImageData(segmentPts1[3][0], segmentPts1[3][1], 1, 1);
             refImgPixelColorChecking(data, 255, 0, 0, 255);
         });
-        it("render multiple polyline path from a compoundPath component one after another", () => {});
+        // it("render multiple polyline path from a compoundPath component one after another", () => {
+        //     return false;
+        // });
     });
-    describe("bezier path", () => {
-        it("render a bezier path from a compoundPath", () => {});
-        it("render multiple bezier path from a componentPath one after another ", () => {});
-        it("render a compound path composed of segment paths and bezier paths one after another", () => {});
-        it("render part of a bezier path to a percent different than 100", () => {});
-        it("render part of bezier path from a percent differetn than 0", () => {});
-        it("render a bezier path from a position different than the original starting point to a position different than the ending point", () => {});
-    });
-    describe("layering", () => {
-        it("render multiple compoundPath in the order of their layer index", () => {});
-        it("we should be able to change the layer of a compound path", () => {});
-    });
-    describe("rendering part of a compoundPath", () => {
-        it("from a position different than the 0", () => {});
-        it("to a position different than 1", () => {});
-    });
-    describe("style", () => {
-        it("render points of all path from a compoundPath component when debuge param is set to true", () => {});
-    });
+    // describe("bezier path", () => {
+    //     it("render a bezier path from a compoundPath", () => { return false; });
+    //     it("render multiple bezier path from a componentPath one after another ", () => {return false; });
+    //     it("render a compound path composed of segment paths and bezier paths one after another", () => {return false;});
+    //     it("render part of a bezier path to a percent different than 100", () => {return false;});
+    //     it("render part of bezier path from a percent differetn than 0", () => {return false;});
+    //     it("render a bezier path from a position different than the original starting point to a position different than the ending point", () => {return false;});
+    // });
+    // describe("layering", () => {
+    //     it("render multiple compoundPath in the order of their layer index", () => {return false;});
+    //     it("we should be able to change the layer of a compound path", () => {return false;});
+    // });
+    // describe("rendering part of a compoundPath", () => {
+    //     it("from a position different than the 0", () => {return false;});
+    //     it("to a position different than 1", () => {return false;});
+    // });
+    // describe("style", () => {
+    //     it("render points of all path from a compoundPath component when debuge param is set to true", () => {return false;});
+    // });
 });
 
 // Checking that the pixel is of the given color
