@@ -51,7 +51,6 @@ describe("PathEntityFactory ", () => {
                 const c = entityFactory.pathPool.get(pId);
                 // point pool is supposed to be empty before we create a path entity
                 // therefore the first point id should be 1
-                console.log(c.firstPtId);
                 expect(c.firstPtId).to.equal((pId - 1 ) * points.length + 1);
                 expect(c.nbPt).to.equal(points.length);
                 expect(c.type).to.equal(pathType.cubicBezier);
