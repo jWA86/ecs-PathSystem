@@ -2,9 +2,9 @@ import { expect } from "chai";
 import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
-import { CompoundPathComponent } from "../src/CompoundPathComponent";
+import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { IPathStyle, PathComponent, pathType } from "../src/PathComponent";
+import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
 
@@ -15,7 +15,7 @@ describe("CompoundPathEntityFactory ", () => {
     });
     describe("construction", () => {
         it("should hold a reference to a compound path component pool and a pathComponentFactory", () => {
-            const pathPool = new ComponentFactory<PathComponent>(50, PathComponent, pathType.cubicBezier, 1, 4, defaultStyle);
+            const pathPool = new ComponentFactory<PathComponent>(50, PathComponent, pathType.cubicBezier, 1, 4);
             const pointPool = new ComponentFactory<PointComponent>(500, PointComponent, vec2.fromValues(0.0, 0.0));
             const pathEntityFactory = new PathEntityFactory(0, 0, pointPool, pathPool);
 
@@ -68,26 +68,8 @@ describe("CompoundPathEntityFactory ", () => {
             });
         });
         describe("createPathAt() should", () => {
-            it("", () => {
-
-            });
+            it("", () => {});
             it("create a path and insert it at the end of the compound path if no pathId is provided", () => {
-                // expect(compoundEntityFactory.componentPool.nbCreated).to.equal(0);
-                // expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(0);
-                // expect(compoundEntityFactory.pathEntityFactory.pointPool.nbCreated).to.equal(0);
-                // let res = compoundEntityFactory.create(1);
-                // expect(res).to.not.equal(null || undefined);
-                // let cubicBezierPts = [vec2.fromValues(100, 200),
-                //      vec2.fromValues(100, 100),
-                //       vec2.fromValues(250, 100),
-                //        vec2.fromValues(250, 200)];
-                // compoundEntityFactory.createPathAt(res.entityId, cubicBezierPts, pathType.cubicBezier);
-                // expect(res.firstPathId).to.equal(1);
-                // expect(res.nbPath).to.equal(1);
-
-                // expect(compoundEntityFactory.pathEntityFactory.pathPool.get(1).firstPtId).to.equal(1);
-                // expect(compoundEntityFactory.pathEntityFactory.pathPool.get(1).nbPt).to.equal(cubicBezierPts.length);
-                //     // have to check with a path in the middle of the pool
             });
         });
     });

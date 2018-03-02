@@ -1,17 +1,17 @@
 import { ComponentFactory } from "ecs-framework";
-// import { PathComponent, IPathStyle, pathType } from "./PathComponent";
-import { CompoundPathComponent } from "../src/CompoundPathComponent";
+import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { PathEntityFactory} from "../src/PathEntityFactory";
-// import { PointComponent } from "./PointComponent";
-import { IPathStyle, PathComponent, pathType } from "./PathComponent";
+import { PathComponent, pathType } from "./PathComponent";
 export { CompoundPathEntityFactory };
 import { vec2 } from "gl-matrix";
 
 class CompoundPathEntityFactory {
     public componentPool: ComponentFactory<CompoundPathComponent>;
     public pathEntityFactory: PathEntityFactory;
-    constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory) {
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0);
+    public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
+    constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle ) {
+        this.defaultStyle = defaultStyle || this.defaultStyle;
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle);
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
@@ -20,9 +20,14 @@ class CompoundPathEntityFactory {
      * @param {boolean} [visible=true] Set visibility
      * @param {boolean} [active=true]  Activate the component
      */
-    public create(entityId: number, visible: boolean = true, active = true): CompoundPathComponent {
+    public create(entityId: number, visible: boolean = true, style = this.defaultStyle, active = true): CompoundPathComponent {
         const c = this.componentPool.create(entityId, active);
         c.visible = visible;
+        console.log(c);
+        // copy prop of style to the component
+        Object.keys(style).forEach((k) => {
+            c.style[k] = style[k];
+        });
         return c;
     }
 
@@ -34,7 +39,7 @@ class CompoundPathEntityFactory {
      * @param visible
      * @param active
      */
-    public createFromPaths(entityId: number, sourcePathFactory: PathEntityFactory, pathIds: number[], visible: boolean = true, active = true) {
+    public createFromPaths(entityId: number, sourcePathFactory: PathEntityFactory, pathIds: number[], visible: boolean = true, style = this.defaultStyle, active = true) {
         const beforeNbComp = this.pathEntityFactory.pathPool.nbCreated;
         // copy paths before creating new compoundPath component
         const fId = this.copyPaths(sourcePathFactory, pathIds);
@@ -42,7 +47,7 @@ class CompoundPathEntityFactory {
              throw Error("Not all paths component were copied");
         }
 
-        const newCompound = this.create(entityId, visible, active);
+        const newCompound = this.create(entityId, visible, style, active);
         newCompound.firstPathId = fId;
         newCompound.nbPath = pathIds.length;
         return newCompound;
@@ -74,7 +79,7 @@ class CompoundPathEntityFactory {
                 const newPt = this.pathEntityFactory.pointPool.create(newId, true);
                 vec2.copy(newPt.point, inputPathFactory.pointPool.values[i].point);
             }
-            const copiedP = this.pathEntityFactory.createPathComponent(this.pathEntityFactory.getLastPathId() + 1, firstPtId, path.nbPt, path.type, path.style, path.active);
+            const copiedP = this.pathEntityFactory.createPathComponent(this.pathEntityFactory.getLastPathId() + 1, firstPtId, path.nbPt, path.type, path.active);
         });
         return firstPathId;
     }

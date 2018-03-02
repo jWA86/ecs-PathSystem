@@ -2,18 +2,15 @@ import { expect } from "chai";
 import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
-import { IPathStyle, PathComponent, pathType  } from "../src/PathComponent";
+import { PathComponent, pathType  } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
 
 describe("PathEntityFactory ", () => {
-    let defaultStyle: IPathStyle;
-    beforeEach(() => {
-        defaultStyle = {lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter"};
-    });
+
     describe("construction", () => {
         it("should hold a reference to a path component pool and a point component pool", () => {
-            const pathFactory = new ComponentFactory<PathComponent>(50, PathComponent, pathType.cubicBezier, 1, 4, defaultStyle);
+            const pathFactory = new ComponentFactory<PathComponent>(50, PathComponent, pathType.cubicBezier, 1, 4);
             const pointFactory = new ComponentFactory<PointComponent>(500, PointComponent, vec2.fromValues(0.0, 0.0));
             const entityFactory = new PathEntityFactory(0, 0, pointFactory, pathFactory);
             expect(entityFactory.pathPool).to.equal(pathFactory);
@@ -32,7 +29,7 @@ describe("PathEntityFactory ", () => {
         let pointFactory: ComponentFactory<PointComponent>;
         let entityFactory: PathEntityFactory;
         beforeEach(() => {
-            pathFactory = new ComponentFactory<PathComponent>(10, PathComponent, pathType.polyline, 0, 0, defaultStyle);
+            pathFactory = new ComponentFactory<PathComponent>(10, PathComponent, pathType.polyline, 0, 0);
             pointFactory = new ComponentFactory<PointComponent>(100, PointComponent, vec2.fromValues(0.0, 0.0));
             entityFactory = new PathEntityFactory(0, 0, pointFactory, pathFactory);
         });
@@ -43,17 +40,13 @@ describe("PathEntityFactory ", () => {
             points.push(vec2.fromValues(3.0, 3.0));
             points.push(vec2.fromValues(4.0, 4.0));
 
-            defaultStyle.lineWidth = 2;
-            defaultStyle.strokeStyle = "blue";
-            entityFactory.create(1, points, pathType.cubicBezier, defaultStyle);
+            entityFactory.create(1, points, pathType.cubicBezier);
             const c = entityFactory.pathPool.get(1);
             // point pool is supposed to be empty before we create a path entity
             // therefore the first point id should be 1
             expect(c.firstPtId).to.equal(1);
             expect(c.nbPt).to.equal(points.length);
             expect(c.type).to.equal(pathType.cubicBezier);
-            expect(c.style.lineWidth).to.equal(defaultStyle.lineWidth);
-            expect(c.style.strokeStyle).to.equal(defaultStyle.strokeStyle);
             // checking that points are created in the point pool
             const fpt = entityFactory.pointPool.get(1).point;
             expect(vec2.distance(fpt, points[0])).to.equal(0);
@@ -65,7 +58,7 @@ describe("PathEntityFactory ", () => {
             expect(vec2.distance(fopt, points[3])).to.equal(0);
         });
         it("return a PathComponent", () => {
-            const res: any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
+            const res: any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline);
             expect(res instanceof PathComponent).to.equal(true);
             expect(res.entityId).to.equal(1);
         });
@@ -79,7 +72,7 @@ describe("PathEntityFactory ", () => {
         // });
         it("if the number of points provided are < 1 it should fire an error", () => {
             try {
-                const path1: any = entityFactory.create(1, [], pathType.polyline, defaultStyle);
+                const path1: any = entityFactory.create(1, [], pathType.polyline);
             } catch (e) {
                 expect(e instanceof Error).to.equal(true);
             }
