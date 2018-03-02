@@ -33,29 +33,49 @@ describe("PathEntityFactory ", () => {
             pointFactory = new ComponentFactory<PointComponent>(100, PointComponent, vec2.fromValues(0.0, 0.0));
             entityFactory = new PathEntityFactory(0, 0, pointFactory, pathFactory);
         });
-        it("create a Path component along its points in the appropriete pool", () => {
+        it("create Path component along its points in the appropriete pool", () => {
             const points = [];
             points.push(vec2.fromValues(1.0, 1.0));
             points.push(vec2.fromValues(2.0, 2.0));
             points.push(vec2.fromValues(3.0, 3.0));
             points.push(vec2.fromValues(4.0, 4.0));
-
+            const points2 = points.map((p) => {
+                const v = vec2.create();
+                vec2.add(v, p, [.5, .5]);
+                return v;
+            });
             entityFactory.create(1, points, pathType.cubicBezier);
-            const c = entityFactory.pathPool.get(1);
-            // point pool is supposed to be empty before we create a path entity
-            // therefore the first point id should be 1
-            expect(c.firstPtId).to.equal(1);
-            expect(c.nbPt).to.equal(points.length);
-            expect(c.type).to.equal(pathType.cubicBezier);
+            entityFactory.create(2, points2, pathType.cubicBezier);
+            let pId = 1;
+            while (pId <= 2) {
+                const c = entityFactory.pathPool.get(pId);
+                // point pool is supposed to be empty before we create a path entity
+                // therefore the first point id should be 1
+                console.log(c.firstPtId);
+                expect(c.firstPtId).to.equal((pId - 1 ) * points.length + 1);
+                expect(c.nbPt).to.equal(points.length);
+                expect(c.type).to.equal(pathType.cubicBezier);
+                pId += 1;
+            }
             // checking that points are created in the point pool
-            const fpt = entityFactory.pointPool.get(1).point;
-            expect(vec2.distance(fpt, points[0])).to.equal(0);
-            const spt = entityFactory.pointPool.get(2).point;
-            expect(vec2.distance(spt, points[1])).to.equal(0);
-            const tpt = entityFactory.pointPool.get(3).point;
-            expect(vec2.distance(tpt, points[2])).to.equal(0);
-            const fopt = entityFactory.pointPool.get(4).point;
-            expect(vec2.distance(fopt, points[3])).to.equal(0);
+            const pt1 = entityFactory.pointPool.get(1).point;
+            expect(vec2.distance(pt1, points[0])).to.equal(0);
+            const pt2 = entityFactory.pointPool.get(2).point;
+            expect(vec2.distance(pt2, points[1])).to.equal(0);
+            const pt3 = entityFactory.pointPool.get(3).point;
+            expect(vec2.distance(pt3, points[2])).to.equal(0);
+            const pt4 = entityFactory.pointPool.get(4).point;
+            expect(vec2.distance(pt4, points[3])).to.equal(0);
+
+            const pt21 = entityFactory.pointPool.get(5).point;
+            expect(vec2.distance(pt21, points2[0])).to.equal(0);
+            const pt22 = entityFactory.pointPool.get(6).point;
+            expect(vec2.distance(pt22, points2[1])).to.equal(0);
+            const pt23 = entityFactory.pointPool.get(7).point;
+            expect(vec2.distance(pt23, points2[2])).to.equal(0);
+            const pt24 = entityFactory.pointPool.get(8).point;
+            expect(vec2.distance(pt24, points2[3])).to.equal(0);
+
         });
         it("return a PathComponent", () => {
             const res: any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline);

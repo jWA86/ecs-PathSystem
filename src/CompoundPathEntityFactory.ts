@@ -23,7 +23,6 @@ class CompoundPathEntityFactory {
     public create(entityId: number, visible: boolean = true, style = this.defaultStyle, active = true): CompoundPathComponent {
         const c = this.componentPool.create(entityId, active);
         c.visible = visible;
-        console.log(c);
         // copy prop of style to the component
         Object.keys(style).forEach((k) => {
             c.style[k] = style[k];
