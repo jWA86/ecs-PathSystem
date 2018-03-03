@@ -20,13 +20,16 @@ class CompoundPathRendererSystem extends System {
         // iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
         let lastPt: vec2;
+        let lastType: pathType;
         for (let i = firstPathIndex; i < firstPathIndex + param2.nbPath; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             // polyline
             if (path.type === pathType.polyline) {
                 lastPt = this.tracePolyLine(path, lastPt);
+                lastType = pathType.polyline;
             } else if (path.type === pathType.cubicBezier) {
-                lastPt = this.traceCubicBezier(path, lastPt);
+                lastPt = this.traceCubicBezier(path, lastType, lastPt);
+                lastType = pathType.cubicBezier;
             }
         }
         this.context.lineWidth = param3.style.lineWidth;
@@ -38,7 +41,7 @@ class CompoundPathRendererSystem extends System {
     }
     /**
      * lineTo points of pathComponent from a position.
-     * @param path 
+     * @param path
      * @param from position to draw from, if it's not provided we draw from the first point of the path
      */
     protected tracePolyLine(path: PathComponent, from?: vec2 ): vec2 {
@@ -53,12 +56,17 @@ class CompoundPathRendererSystem extends System {
         return pt;
     }
 
-    protected traceCubicBezier(path: PathComponent, from?: vec2): vec2 {
+    protected traceCubicBezier(path: PathComponent, lastType: pathType, from?: vec2): vec2 {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
         const pt0 = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
         from = from || pt0;
         this.context.moveTo(from[X], from[Y]);
+
         const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
+        // if the previous path was a polyline lineTo the first point of the bezier curve
+        if(lastType === pathType.polyline) {
+            this.context.lineTo(pt0[X], pt0[Y]);
+        }
         // skip the first point since we only need 3 points
         const pt1 = pool[firstPtIndex + 1].point;
         const pt2 = pool[firstPtIndex + 2].point;
