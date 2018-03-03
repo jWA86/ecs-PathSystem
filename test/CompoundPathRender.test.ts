@@ -100,14 +100,42 @@ describe( "Renderer", () => {
             refImgPixelColorChecking(data, 255, 0, 0, 255);
         });
     });
-    // describe("bezier path", () => {
-    //     it("render a bezier path from a compoundPath", () => { return false; });
+    describe("bezier path", () => {
+        const cubicBezierPts1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
+        const cubicBezierPts2 = [vec2.fromValues(250, 200), vec2.fromValues(250, 300), vec2.fromValues(400, 300), vec2.fromValues(400, 200)];
+        it("render a bezier path from a compoundPath", () => {
+            const cId = 1;
+            const renderSys = new CompoundPathRendererSystem(ctx);
+            const cPool = new CompoundPathEntityFactory(10, 100, 1000);
+            cPool.defaultStyle.lineWidth = 5;
+            cPool.defaultStyle.strokeStyle = "red";
+            cPool.defaultStyle.lineCap = "square";
+
+            bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1]);
+
+            renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool);
+            renderSys.compoundPathEntityPool = cPool;
+            renderSys.process();
+
+            let data = ctx.getImageData(cubicBezierPts1[0][0], cubicBezierPts1[0][1], 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            let ptOnTheCurve = getPointAt(0.3, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+        });
     //     it("render multiple bezier path from a componentPath one after another ", () => {return false; });
     //     it("render a compound path composed of segment paths and bezier paths one after another", () => {return false;});
     //     it("render part of a bezier path to a percent different than 100", () => {return false;});
     //     it("render part of bezier path from a percent differetn than 0", () => {return false;});
     //     it("render a bezier path from a position different than the original starting point to a position different than the ending point", () => {return false;});
-    // });
+    });
     // describe("layering", () => {
     //     it("render multiple compoundPath in the order of their layer index", () => {return false;});
     //     it("we should be able to change the layer of a compound path", () => {return false;});
@@ -127,4 +155,22 @@ const refImgPixelColorChecking = (pixel: ImageData, r: number, g: number, b: num
     expect(pixel.data[1]).to.equal(g);
     expect(pixel.data[2]).to.equal(b);
     expect(pixel.data[3]).to.equal(a);
+};
+
+// get point at a position on the curves parameter space
+const getPointAt = (t: number, p0: vec2, p1: vec2, p2: vec2, p3: vec2) => {
+
+    const u = 1 - t;
+    const tt = t * t;
+    const uu = u * u;
+    const uuu = uu * u;
+    const ttt = tt * t;
+    const p = vec2.create();
+    // console.log(p0);
+    vec2.scale(p, p0, uuu);
+    vec2.scaleAndAdd(p, p, p1, 3 * uu * t);
+    vec2.scaleAndAdd(p, p, p2, 3 * u * tt);
+    vec2.scaleAndAdd(p, p, p3, ttt);
+
+    return p;
 };

@@ -26,7 +26,7 @@ class CompoundPathRendererSystem extends System {
             if (path.type === pathType.polyline) {
                 lastPt = this.tracePolyLine(path, lastPt);
             } else if (path.type === pathType.cubicBezier) {
-
+                lastPt = this.traceCubicBezier(path, lastPt);
             }
         }
         this.context.lineWidth = param3.style.lineWidth;
@@ -51,5 +51,19 @@ class CompoundPathRendererSystem extends System {
             this.context.lineTo(pt[X], pt[Y]);
         }
         return pt;
+    }
+
+    protected traceCubicBezier(path: PathComponent, from?: vec2): vec2 {
+        const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
+        const pt0 = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
+        from = from || pt0;
+        this.context.moveTo(from[X], from[Y]);
+        const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
+        // skip the first point since we only need 3 points
+        const pt1 = pool[firstPtIndex + 1].point;
+        const pt2 = pool[firstPtIndex + 2].point;
+        const pt3 = pool[firstPtIndex + 3].point;
+        this.context.bezierCurveTo(pt1[X], pt1[Y], pt2[X], pt2[Y], pt3[X], pt3[Y]);
+        return pt3;
     }
 }
