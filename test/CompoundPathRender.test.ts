@@ -130,7 +130,46 @@ describe( "Renderer", () => {
             data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
             refImgPixelColorChecking(data, 255, 0, 0, 255);
         });
-    //     it("render multiple bezier path from a componentPath one after another ", () => {return false; });
+        it("render multiple bezier path from a componentPath one after another ", () => {
+            const cId = 1;
+            const renderSys = new CompoundPathRendererSystem(ctx);
+            const cPool = new CompoundPathEntityFactory(10, 100, 1000);
+            cPool.defaultStyle.lineWidth = 5;
+            cPool.defaultStyle.strokeStyle = "red";
+            cPool.defaultStyle.lineCap = "square";
+
+            bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+            bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+
+            renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool);
+            renderSys.compoundPathEntityPool = cPool;
+            renderSys.process();
+
+            let data = ctx.getImageData(cubicBezierPts1[0][0], cubicBezierPts1[0][1], 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            let ptOnTheCurve = getPointAt(0.3, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+
+            data = ctx.getImageData(cubicBezierPts2[0][0], cubicBezierPts2[0][1], 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.3, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+        });
     //     it("render a compound path composed of segment paths and bezier paths one after another", () => {return false;});
     //     it("render part of a bezier path to a percent different than 100", () => {return false;});
     //     it("render part of bezier path from a percent differetn than 0", () => {return false;});
