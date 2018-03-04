@@ -11,9 +11,9 @@ const Y = 1;
 class CompoundPathRendererSystem extends System {
     public compoundPathEntityPool: CompoundPathEntityFactory;
     constructor(public context: CanvasRenderingContext2D) { super(); }
-   // iterate on a compoundPAth component
-   // then iterate on all their paths
-   // finally iterate on points for drawing
+    // iterate on a compoundPAth component
+    // then iterate on all their paths
+    // finally iterate on points for rendering
     public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }) {
 
         this.context.beginPath();
@@ -37,6 +37,7 @@ class CompoundPathRendererSystem extends System {
         this.context.strokeStyle = param3.style.strokeStyle;
         this.context.lineJoin = param3.style.lineJoin;
         this.context.stroke();
+
         this.context.setTransform(1, 0, 0, 1, 0, 0);
     }
     /**
@@ -44,7 +45,7 @@ class CompoundPathRendererSystem extends System {
      * @param path
      * @param from position to draw from, if it's not provided we draw from the first point of the path
      */
-    protected tracePolyLine(path: PathComponent, from?: vec2 ): vec2 {
+    protected tracePolyLine(path: PathComponent, from?: vec2): vec2 {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
         let pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
         from = from || pt;
@@ -64,7 +65,7 @@ class CompoundPathRendererSystem extends System {
 
         const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
         // if the previous path was a polyline lineTo the first point of the bezier curve
-        if(lastType === pathType.polyline) {
+        if (lastType === pathType.polyline) {
             this.context.lineTo(pt0[X], pt0[Y]);
         }
         // skip the first point since we only need 3 points
@@ -75,3 +76,4 @@ class CompoundPathRendererSystem extends System {
         return pt3;
     }
 }
+

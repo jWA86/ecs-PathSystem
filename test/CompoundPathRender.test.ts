@@ -5,6 +5,7 @@ import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
 import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
+import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
@@ -32,6 +33,12 @@ describe("Renderer", () => {
     const cubicBezierPts1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
     const cubicBezierPts2 = [vec2.fromValues(250, 200), vec2.fromValues(250, 300), vec2.fromValues(400, 300), vec2.fromValues(400, 200)];
 
+    const DEBUG_RED = 0;
+    const DEBUG_GREEN = 0;
+    const DEBUG_BLUE = 255;
+    const debugColorString = `rgb(${DEBUG_RED}, ${DEBUG_GREEN}, ${DEBUG_BLUE})`;
+    const debugStyle = { radius: 4, fillStyle: debugColorString, lineWidth: 0.5, strokeStyle: debugColorString };
+
     beforeEach(() => {
         // remove the canvas before recreating one for each test
         document.body.innerHTML = "";
@@ -48,7 +55,6 @@ describe("Renderer", () => {
 
         renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
-
     });
 
     describe("polyline path", () => {
@@ -216,9 +222,38 @@ describe("Renderer", () => {
     //     it("from a position different than the 0", () => {return false;});
     //     it("to a position different than 1", () => {return false;});
     // });
-    // describe("style", () => {
-    //     it("render points of all path from a compoundPath component when debuge param is set to true", () => {return false;});
-    // });
+    describe("style", () => {
+         it("render control points from a compoundPath component as points when debuge param is set to true", () => {
+            const cId = 1;
+
+            bufferPathFactory.create(2, segmentPts2, pathType.polyline);
+            bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
+            const debugSys = new DebugCompoundPathRendererSystem(ctx, debugStyle);
+            debugSys.setFactories(cPool.componentPool, cPool.componentPool);
+            debugSys.compoundPathEntityPool = cPool;
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);
+            // renderSys.process();
+            debugSys.process();
+
+            let data = ctx.getImageData(segmentPts2[0][0], segmentPts2[0][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(segmentPts2[1][0], segmentPts2[1][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(segmentPts2[2][0], segmentPts2[2][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(segmentPts2[3][0], segmentPts2[3][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+
+            data = ctx.getImageData(cubicBezierPts2[0][0], cubicBezierPts2[0][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(cubicBezierPts2[1][0], cubicBezierPts2[1][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(cubicBezierPts2[2][0], cubicBezierPts2[2][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            data = ctx.getImageData(cubicBezierPts2[3][0], cubicBezierPts2[3][1], 1, 1);
+            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+        });
+    });
 });
 
 // Checking that the pixel is of the given color
@@ -231,14 +266,13 @@ const refImgPixelColorChecking = (pixel: ImageData, r: number, g: number, b: num
 
 // get point at a position on the curves parameter space
 const getPointAt = (t: number, p0: vec2, p1: vec2, p2: vec2, p3: vec2) => {
-
     const u = 1 - t;
     const tt = t * t;
     const uu = u * u;
     const uuu = uu * u;
     const ttt = tt * t;
     const p = vec2.create();
-    // console.log(p0);
+
     vec2.scale(p, p0, uuu);
     vec2.scaleAndAdd(p, p, p1, 3 * uu * t);
     vec2.scaleAndAdd(p, p, p2, 3 * u * tt);
