@@ -33,8 +33,16 @@ class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
     public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4 }) {
         // Iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
+
+        // a	m11 : glM : m00 [0]
+        // b	m12 : glM : m01 [1]
+        // c	m21 : glM : m10 [4]
+        // d	m22 : glM : m11 [5]
+        // e	m41 : glM : m30 [12]
+        // f	m42 : glM : m31 [13]
         const t = param4.transform;
         this.context.setTransform(t[scaleX], t[skewX], t[skewY], t[scaleY], t[translateX], t[translateY]);
+
         for (let i = firstPathIndex; i < firstPathIndex + param2.nbPath; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             this.renderPoints(path);
