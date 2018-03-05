@@ -33,12 +33,6 @@ describe("Renderer", () => {
     const cubicBezierPts1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
     const cubicBezierPts2 = [vec2.fromValues(250, 200), vec2.fromValues(250, 300), vec2.fromValues(400, 300), vec2.fromValues(400, 200)];
 
-    const DEBUG_RED = 0;
-    const DEBUG_GREEN = 0;
-    const DEBUG_BLUE = 255;
-    const debugColorString = `rgb(${DEBUG_RED}, ${DEBUG_GREEN}, ${DEBUG_BLUE})`;
-    const debugStyle = { radius: 4, fillStyle: debugColorString, lineWidth: 0.5, strokeStyle: debugColorString };
-
     beforeEach(() => {
         // remove the canvas before recreating one for each test
         document.body.innerHTML = "";
@@ -53,7 +47,7 @@ describe("Renderer", () => {
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
-        renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
     });
 
@@ -222,36 +216,52 @@ describe("Renderer", () => {
     //     it("from a position different than the 0", () => {return false;});
     //     it("to a position different than 1", () => {return false;});
     // });
-    describe("style", () => {
-         it("render control points from a compoundPath component as points when debuge param is set to true", () => {
-            const cId = 1;
-
+    describe("Presentation", () => {
+        it("translate a compoundPath", () => {
+            bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
             bufferPathFactory.create(2, segmentPts2, pathType.polyline);
             bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
-            const debugSys = new DebugCompoundPathRendererSystem(ctx, debugStyle);
-            debugSys.setFactories(cPool.componentPool, cPool.componentPool);
-            debugSys.compoundPathEntityPool = cPool;
-            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);
-            // renderSys.process();
-            debugSys.process();
 
-            let data = ctx.getImageData(segmentPts2[0][0], segmentPts2[0][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(segmentPts2[1][0], segmentPts2[1][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(segmentPts2[2][0], segmentPts2[2][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(segmentPts2[3][0], segmentPts2[3][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [2, 3]);
+            const tx = 50;
+            const ty = 50;
+            mat4.translate(cp1.transform, cp1.transform, [tx, ty, 1]);
 
-            data = ctx.getImageData(cubicBezierPts2[0][0], cubicBezierPts2[0][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(cubicBezierPts2[1][0], cubicBezierPts2[1][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(cubicBezierPts2[2][0], cubicBezierPts2[2][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
-            data = ctx.getImageData(cubicBezierPts2[3][0], cubicBezierPts2[3][1], 1, 1);
-            refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
+            // create a second component and make sure it's undergo the previous transformation
+            const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1]);
+
+            renderSys.process();
+
+            let ptOnTheCurve = getPointAt(0, segmentPts2[0], segmentPts2[1], segmentPts2[2], segmentPts2[3]);
+            let data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, segmentPts2[0], segmentPts2[1], segmentPts2[2], segmentPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, segmentPts2[0], segmentPts2[1], segmentPts2[2], segmentPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+
+            ptOnTheCurve = getPointAt(0, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, cubicBezierPts2[0], cubicBezierPts2[1], cubicBezierPts2[2], cubicBezierPts2[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]) + tx, Number(ptOnTheCurve[1]) + ty, 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+
+            // should not be translated
+            ptOnTheCurve = getPointAt(0, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(0.5, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
+            ptOnTheCurve = getPointAt(1, cubicBezierPts1[0], cubicBezierPts1[1], cubicBezierPts1[2], cubicBezierPts1[3]);
+            data = ctx.getImageData(Number(ptOnTheCurve[0]), Number(ptOnTheCurve[1]), 1, 1);
+            refImgPixelColorChecking(data, 255, 0, 0, 255);
         });
     });
 });

@@ -1,22 +1,32 @@
 import { ComponentFactory, System } from "ecs-framework";
-import { vec2 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
 export { CompoundPathRendererSystem };
+
 const X = 0;
 const Y = 1;
+const scaleX = 0;
+const scaleY = 5;
+const skewX = 1;
+const skewY = 4;
+const translateX = 12;
+const translateY = 13;
+
 class CompoundPathRendererSystem extends System {
     public compoundPathEntityPool: CompoundPathEntityFactory;
     constructor(public context: CanvasRenderingContext2D) { super(); }
     // iterate on a compoundPAth component
     // then iterate on all their paths
     // finally iterate on points for rendering
-    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }) {
+    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4}) {
 
         this.context.beginPath();
+        const t = param4.transform;
+        this.context.setTransform(t[scaleX], t[skewX], t[skewY], t[scaleY], t[translateX], t[translateY]);
         // iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
         let lastPt: vec2;
@@ -76,4 +86,3 @@ class CompoundPathRendererSystem extends System {
         return pt3;
     }
 }
-

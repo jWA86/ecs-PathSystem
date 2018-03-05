@@ -1,4 +1,5 @@
 import { IComponent } from "ecs-framework";
+import { mat4 } from "gl-matrix";
 export { CompoundPathComponent, IPathStyle };
 
 interface IPathStyle {
@@ -9,6 +10,5 @@ interface IPathStyle {
 }
 
 class CompoundPathComponent implements IComponent {
-    constructor(public entityId: number, public active: boolean, public visible: boolean, public firstPathId: number, public nbPath: number, public style: IPathStyle) {}
+    constructor(public entityId: number, public active: boolean, public visible: boolean, public firstPathId: number, public nbPath: number, public style: IPathStyle, public transform: mat4) {}
 }
-// to add : lenght

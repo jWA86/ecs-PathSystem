@@ -3,7 +3,7 @@ import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent"
 import { PathEntityFactory} from "../src/PathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 export { CompoundPathEntityFactory };
-import { vec2 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 
 class CompoundPathEntityFactory {
     public componentPool: ComponentFactory<CompoundPathComponent>;
@@ -11,7 +11,7 @@ class CompoundPathEntityFactory {
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
     constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle ) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle);
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create());
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
