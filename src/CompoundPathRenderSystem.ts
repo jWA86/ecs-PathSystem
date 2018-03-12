@@ -1,5 +1,6 @@
 import { ComponentFactory, System } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
+import * as CONF from "../src/config";
 import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
@@ -7,14 +8,14 @@ import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
 export { CompoundPathRendererSystem };
 
-const X = 0;
-const Y = 1;
-const scaleX = 0;
-const scaleY = 5;
-const skewX = 1;
-const skewY = 4;
-const translateX = 12;
-const translateY = 13;
+// const X = 0;
+// const Y = 1;
+// const scaleX = 0;
+// const scaleY = 5;
+// const skewX = 1;
+// const skewY = 4;
+// const translateX = 12;
+// const translateY = 13;
 
 class CompoundPathRendererSystem extends System {
     public compoundPathEntityPool: CompoundPathEntityFactory;
@@ -33,7 +34,7 @@ class CompoundPathRendererSystem extends System {
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
         const t = param4.transform;
-        this.context.setTransform(t[scaleX], t[skewX], t[skewY], t[scaleY], t[translateX], t[translateY]);
+        this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
 
         // Iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
@@ -67,10 +68,10 @@ class CompoundPathRendererSystem extends System {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
         let pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
         from = from || pt;
-        this.context.moveTo(from[X], from[Y]);
+        this.context.moveTo(from[CONF.X], from[CONF.Y]);
         for (let j = firstPtIndex; j < firstPtIndex + path.nbPt; ++j) {
             pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[j].point;
-            this.context.lineTo(pt[X], pt[Y]);
+            this.context.lineTo(pt[CONF.X], pt[CONF.Y]);
         }
         return pt;
     }
@@ -79,18 +80,18 @@ class CompoundPathRendererSystem extends System {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
         const pt0 = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
         from = from || pt0;
-        this.context.moveTo(from[X], from[Y]);
+        this.context.moveTo(from[CONF.X], from[CONF.Y]);
 
         const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
         // if the previous path was a polyline lineTo the first point of the bezier curve
         if (lastType === pathType.polyline) {
-            this.context.lineTo(pt0[X], pt0[Y]);
+            this.context.lineTo(pt0[CONF.X], pt0[CONF.Y]);
         }
         // skip the first point since we only need 3 points
         const pt1 = pool[firstPtIndex + 1].point;
         const pt2 = pool[firstPtIndex + 2].point;
         const pt3 = pool[firstPtIndex + 3].point;
-        this.context.bezierCurveTo(pt1[X], pt1[Y], pt2[X], pt2[Y], pt3[X], pt3[Y]);
+        this.context.bezierCurveTo(pt1[CONF.X], pt1[CONF.Y], pt2[CONF.X], pt2[CONF.Y], pt3[CONF.X], pt3[CONF.Y]);
         return pt3;
     }
 }

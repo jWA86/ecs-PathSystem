@@ -1,0 +1,20 @@
+
+export { DEBUG, BUFFER_NB_POINTS, MIN_DIST_BTW_PTS, X, Y, SCALE_X, SCALE_Y, SKEW_X, SKEW_Y, TRANSLATE_X, TRANSLATE_Y };
+
+const DEBUG = { FILLSTYLE: "rgb(51, 204, 255)", STROKESTYLE: "rgb(0, 191, 255)", LINEWITH: 0.5, RADIUS: 2 };
+
+// VECTOR
+const X = 0;
+const Y = 1;
+
+// MATRIX
+const SCALE_X = 0;
+const SCALE_Y = 5;
+const SKEW_X = 1;
+const SKEW_Y = 4;
+const TRANSLATE_X = 12;
+const TRANSLATE_Y = 13;
+
+// TRACE
+const BUFFER_NB_POINTS = 200;
+const MIN_DIST_BTW_PTS = 20;

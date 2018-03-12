@@ -1,6 +1,6 @@
 import { ComponentFactory } from "ecs-framework";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
-import { PathEntityFactory} from "../src/PathEntityFactory";
+import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 export { CompoundPathEntityFactory };
 import { mat4, vec2 } from "gl-matrix";
@@ -9,7 +9,7 @@ class CompoundPathEntityFactory {
     public componentPool: ComponentFactory<CompoundPathComponent>;
     public pathEntityFactory: PathEntityFactory;
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
-    constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle ) {
+    constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
         this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create());
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
@@ -42,14 +42,19 @@ class CompoundPathEntityFactory {
         const beforeNbComp = this.pathEntityFactory.pathPool.nbCreated;
         // copy paths before creating new compoundPath component
         const fId = this.copyPaths(sourcePathFactory, pathIds);
-        if (this.pathEntityFactory.pathPool.nbCreated - beforeNbComp !==  pathIds.length) {
-             throw Error("Not all paths component were copied");
+        if (this.pathEntityFactory.pathPool.nbCreated - beforeNbComp !== pathIds.length) {
+            throw Error("Not all paths component were copied");
         }
 
         const newCompound = this.create(entityId, visible, style, active);
         newCompound.firstPathId = fId;
         newCompound.nbPath = pathIds.length;
         return newCompound;
+    }
+
+    public getLastPathId(): number {
+        if (this.componentPool.iterationLength === 0) { return 0; }
+        return this.componentPool.values[this.componentPool.iterationLength - 1].entityId;
     }
 
     /** Copy paths components and their corresponding points from an inpute PathEntityFactory to the PathEntityFactory of the CompoundFactory
