@@ -8,15 +8,6 @@ import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
 export { CompoundPathRendererSystem };
 
-// const X = 0;
-// const Y = 1;
-// const scaleX = 0;
-// const scaleY = 5;
-// const skewX = 1;
-// const skewY = 4;
-// const translateX = 12;
-// const translateY = 13;
-
 class CompoundPathRendererSystem extends System {
     public compoundPathEntityPool: CompoundPathEntityFactory;
     constructor(public context: CanvasRenderingContext2D) { super(); }
