@@ -9,6 +9,7 @@ import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderS
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
+import { refImgPixelColorChecking } from "./CanvasTestHelper";
 
 describe("Debug", () => {
 
@@ -86,11 +87,3 @@ describe("Debug", () => {
         refImgPixelColorChecking(data, DEBUG_RED, DEBUG_GREEN, DEBUG_BLUE, 255);
     });
 });
-
-// Checking that the pixel is of the given color
-const refImgPixelColorChecking = (pixel: ImageData, r: number, g: number, b: number, a: number) => {
-    expect(pixel.data[0]).to.equal(r);
-    expect(pixel.data[1]).to.equal(g);
-    expect(pixel.data[2]).to.equal(b);
-    expect(pixel.data[3]).to.equal(a);
-};
