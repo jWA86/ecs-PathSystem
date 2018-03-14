@@ -2,17 +2,16 @@ import { vec2, vec3 } from "gl-matrix";
 import { CompoundPathComponent, IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
-export { SVGPathUtil };
+export { svgPathUtil };
 
-class SVGPathUtil {
-    constructor() { }
+const svgPathUtil = {
     /**
      * Create a CompoundEntity from a svg path
      * @param entityId the enityId to give to the entity to be created
      * @param svgPath the svgPath in string format
      * @param compoundFactory the CompoundEntityFactory use for creating the compound entity
      */
-    public parseSVGPath(entityId: number, svgPath: string, compoundFactory: CompoundPathEntityFactory): CompoundPathComponent {
+    parseSVGPath : (entityId: number, svgPath: string, compoundFactory: CompoundPathEntityFactory): CompoundPathComponent => {
         // every c or C or M = a new cubic bezier path
         // since we record 4 points for each cubic bezier we need record the last point of the previous path as the first of the new path
         // once we have the 4 points coordinates
@@ -29,18 +28,18 @@ class SVGPathUtil {
             command = command.trim();
             switch (command.charAt(0)) {
                 case "M":
-                    this.parseM(command, referencePoint, points);
+                    svgPathUtil.parseM(command, referencePoint, points);
                     break;
                 case "C":
                     if (index === 0) {
                         return Error("A path can't begin with a C command");
                     }
-                    this.parseC(command, referencePoint, points);
+                    svgPathUtil.parseC(command, referencePoint, points);
                     createCubicBezierComponent(points);
                     nbPath += 1;
                     break;
                 case "c":
-                    this.parseC(command, referencePoint, points);
+                    svgPathUtil.parseC(command, referencePoint, points);
                     createCubicBezierComponent(points);
                     nbPath += 1;
                     break;
@@ -63,7 +62,7 @@ class SVGPathUtil {
         res.firstPathId = firstPathId;
         res.nbPath = nbPath;
         return res;
-    }
+    },
 
     /** Parse a Move command,
      *
@@ -73,7 +72,7 @@ class SVGPathUtil {
      * @param refVec
      * @param output
      */
-    public parseM(c: string, refVec: vec2, output: vec2[]) {
+    parseM : (c: string, refVec: vec2, output: vec2[]) => {
         // remove 'M'
         c = c.slice(1, c.length);
         const coord = c.split(",");
@@ -85,7 +84,7 @@ class SVGPathUtil {
         } else {
             throw Error("No readable coordinates on element : " + c);
         }
-    }
+    },
 
     /** Parse a cubic bezier curve,
      * Set the last point as a reference for next path,
@@ -94,7 +93,7 @@ class SVGPathUtil {
      * @param refVec
      * @param output
      */
-    public parseC(c: string, refVec: vec2, output: vec2[]) {
+    parseC : (c: string, refVec: vec2, output: vec2[]) => {
         const relative = c.charAt(0) === "c";
         // remove 'C' or 'c'
         c = c.slice(1, c.length);
@@ -118,5 +117,5 @@ class SVGPathUtil {
         } else {
             throw Error("C, Cubic bezier element need 3 points : " + c);
         }
-    }
-}
+    },
+};

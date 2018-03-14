@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { SVGPathUtil } from "../src/SVGPath";
+import { svgPathUtil } from "../src/SVGPath";
 
 describe("SVG path", () => {
     // Path in absolute coordinates
@@ -25,8 +25,7 @@ describe("SVG path", () => {
     describe("parse a svg path composed of cubic bezier curve", ()  => {
         it("absolute coordinate", () => {
             expect(cPool.pathEntityFactory.pointPool.nbCreated).to.equal(0);
-            const svgUtil = new SVGPathUtil();
-            const res = svgUtil.parseSVGPath(1, absSVGPath1, cPool);
+            const res = svgPathUtil.parseSVGPath(1, absSVGPath1, cPool);
 
             expect(res.nbPath).to.equal(nbCurvePath1);
             const pointPool = cPool.pathEntityFactory.pointPool;
@@ -45,8 +44,7 @@ describe("SVG path", () => {
         });
         it("relative coordinates (should convert to absolute coordinates)", () => {
             expect(cPool.pathEntityFactory.pointPool.nbCreated).to.equal(0);
-            const svgUtil = new SVGPathUtil();
-            const res = svgUtil.parseSVGPath(1, relativeSVGPath1, cPool);
+            const res = svgPathUtil.parseSVGPath(1, relativeSVGPath1, cPool);
 
             expect(res.nbPath).to.equal(nbCurvePath1);
             const pointPool = cPool.pathEntityFactory.pointPool;
