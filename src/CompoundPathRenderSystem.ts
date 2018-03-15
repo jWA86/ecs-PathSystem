@@ -1,7 +1,7 @@
 import { ComponentFactory, System } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
-import { IPathStyle } from "./CompoundPathComponent";
+import { IPathStyle, IRange } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 import { PathEntityFactory } from "./PathEntityFactory";
@@ -14,7 +14,7 @@ class CompoundPathRendererSystem extends System {
     // iterate on a compoundPAth component
     // then iterate on all their paths
     // finally iterate on points for rendering
-    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4}) {
+    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4}, param5: { trim: IRange }) {
 
         this.context.beginPath();
 

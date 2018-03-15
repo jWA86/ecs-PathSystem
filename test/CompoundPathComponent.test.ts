@@ -16,22 +16,27 @@ describe("Compound path component should ", () => {
         },
     };
 
+    let myCPath: CompoundPathComponent;
+    beforeEach(() => {
+        myCPath = new CompoundPathComponent(ID.next(), true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 1}, 0);
+    });
+
     it("have a proprety that allow toggling visibility", () => {
         const visibility = false;
-        const cp = new CompoundPathComponent(1, true, visibility, 0, 0, defaultStyle, mat4.create());
-        expect(cp.visible).to.equal(visibility);
-        cp.visible = true;
-        expect(cp.visible).to.equal(true);
+        myCPath.visible = visibility;
+        expect(myCPath.visible).to.equal(visibility);
+        myCPath.visible = true;
+        expect(myCPath.visible).to.equal(true);
     });
     it("holds the id of the first path", () => {
         const idPath = 1;
-        const cp = new CompoundPathComponent(1, true, true, idPath, 0, defaultStyle, mat4.create());
-        expect(cp.firstPathId).to.equal(idPath);
+        myCPath.firstPathId = idPath;
+        expect(myCPath.firstPathId).to.equal(idPath);
     });
     it("holds the number of path that compose the compound path", () => {
         const nbPath = 2;
-        const cp = new CompoundPathComponent(1, true, true, 0, nbPath, defaultStyle, mat4.create());
-        expect(cp.nbPath).to.equal(nbPath);
+        myCPath.nbPath = nbPath;
+        expect(myCPath.nbPath).to.equal(nbPath);
     });
     it("holds stroke style information", () => {
         const color = "blue";
@@ -39,17 +44,30 @@ describe("Compound path component should ", () => {
         const join = "round";
         const width = 5;
         const style: IPathStyle = {lineWidth: width, strokeStyle: color, lineCap: cap, lineJoin: join};
-        const myCPath = new CompoundPathComponent(ID.next(), true, true, 1, 2, style, mat4.create());
+        myCPath.style = style;
         expect(myCPath.style.lineWidth).to.equal(width);
         expect(myCPath.style.strokeStyle).to.equal(color);
         expect(myCPath.style.lineCap).to.equal(cap);
         expect(myCPath.style.lineJoin).to.equal(join);
     });
     it("holds a transformation matrix", () => {
-        const myCPath = new CompoundPathComponent(ID.next(), true, true, 1, 2, defaultStyle, mat4.create());
+        myCPath.transform = mat4.create();
         expect(myCPath.transform[0]).to.equal(1);
         expect(myCPath.transform[5]).to.equal(1);
         expect(myCPath.transform[10]).to.equal(1);
         expect(myCPath.transform[15]).to.equal(1);
+    });
+    it("holds information on percentage to draw", () => {
+        const from = 0.5;
+        const to = 0.75;
+        myCPath.trim.from = from;
+        myCPath.trim.to = to;
+        expect(myCPath.trim.from).to.equal(from);
+        expect(myCPath.trim.to).to.equal(to);
+    });
+    it("holds the total length of the compound path", () => {
+        const length = 10;
+        myCPath.length = length;
+        expect(myCPath.length).to.equal(length);
     });
 });

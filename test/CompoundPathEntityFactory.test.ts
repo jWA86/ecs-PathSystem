@@ -45,7 +45,7 @@ describe("CompoundPathEntityFactory ", () => {
         beforeEach(() => {
             compoundEntityFactory = new CompoundPathEntityFactory(nbCompondPath, nbPath, nbPoints);
         });
-        describe("create() should", () => {
+        describe("create", () => {
             const cubicBezierPts1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
             const cubicBezierPts2 = [vec2.fromValues(250, 200), vec2.fromValues(250, 300), vec2.fromValues(400, 300), vec2.fromValues(400, 200)];
             it("be able to create a new compoundPath component in the compondPath pool", () => {
@@ -65,6 +65,13 @@ describe("CompoundPathEntityFactory ", () => {
                 expect(res.nbPath).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pointPool.nbCreated).to.equal(cubicBezierPts1.length + cubicBezierPts2.length);
+            });
+            it("createFromPaths should set the length of the compoundPath as the sum of all the its paths", () => {
+                const pathEntityFactory = new PathEntityFactory(100, 10);
+                const p1 = pathEntityFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                const p2 = pathEntityFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, [p1.entityId, p2.entityId]);
+                expect(res.length).to.approximately(p1.length + p2.length, 0.1);
             });
         });
         describe("createPathAt() should", () => {

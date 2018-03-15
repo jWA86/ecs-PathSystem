@@ -24,7 +24,7 @@ describe("PathEntityFactory ", () => {
             expect(entityFactory.pointPool.size).to.equal(nbPoints);
         });
     });
-    describe("create() should", () => {
+    describe("create should", () => {
         let pathFactory: ComponentFactory<PathComponent>;
         let pointFactory: ComponentFactory<PointComponent>;
         let entityFactory: PathEntityFactory;
@@ -81,6 +81,30 @@ describe("PathEntityFactory ", () => {
             expect(res instanceof PathComponent).to.equal(true);
             expect(res.entityId).to.equal(1);
         });
+        it("should compute the length of a polyline path and store it in the component", () => {
+            const p1 = vec2.fromValues(0.0, 0.0);
+            const p2 = vec2.fromValues(10.0, 10.0);
+            const p3 = vec2.fromValues(20.0, 20.0);
+            const p4 = vec2.fromValues(30.0, 30.0);
+            let dist = vec2.distance(p1, p2);
+            dist += vec2.distance(p2, p3);
+            dist += vec2.distance(p3, p4);
+            const res: any = entityFactory.create(1, [p1, p2, p3, p4], pathType.polyline);
+            expect(res.length).to.equal(dist);
+        });
+        it("should compute the length of a bezier curve and store it in the component", () => {
+            const p1 = vec2.fromValues(0.0, 0.0);
+            const p2 = vec2.fromValues(10.0, 10.0);
+            const p3 = vec2.fromValues(20.0, 20.0);
+            const p4 = vec2.fromValues(30.0, 30.0);
+            let dist = vec2.distance(p1, p2);
+            dist += vec2.distance(p2, p3);
+            dist += vec2.distance(p3, p4);
+            const res: any = entityFactory.create(1, [p1, p2, p3, p4], pathType.cubicBezier);
+            expect(res.length).to.be.greaterThan(0);
+            // cubicbezier length should be different thant the distance between points of polyline
+            expect(res.length).to.not.equal(dist);
+        });
         // it("if the entity already exist it should fire an error", () =>{
         //     let path1:any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline, defaultStyle);
         //     try {
@@ -111,6 +135,27 @@ describe("PathEntityFactory ", () => {
             entityFactory.create(1, [vec2.create()], pathType.cubicBezier);
             expect(entityFactory.pathPool.nbCreated).to.equal(2);
             expect(entityFactory.getLastPathId()).to.equal(1);
+        });
+    });
+    describe("createPathComponent", () => {
+        it("should compute and set the length of a path at creation", () => {
+            const entityFactory = new PathEntityFactory(10, 2);
+            entityFactory.pathPool.create(1, true);
+            const p1 = entityFactory.pointPool.create(1, true);
+            p1.point = vec2.fromValues(0.0, 0.0);
+            const p2 = entityFactory.pointPool.create(2, true);
+            p2.point = vec2.fromValues(10.0, 10.0);
+            const p3 = entityFactory.pointPool.create(3, true);
+            p3.point = vec2.fromValues(20.0, 20.0);
+            const p4 = entityFactory.pointPool.create(4, true);
+            p3.point = vec2.fromValues(30.0, 30.0);
+
+            let dist = vec2.distance(p1.point, p2.point);
+            dist += vec2.distance(p2.point, p3.point);
+            dist += vec2.distance(p3.point, p4.point);
+
+            const res = entityFactory.createPathComponent(1, 1, 4, pathType.polyline);
+            expect(res.length).to.equal(dist);
         });
     });
 

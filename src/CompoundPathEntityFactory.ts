@@ -11,7 +11,7 @@ class CompoundPathEntityFactory {
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
     constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create());
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create(), {from: 0, to: 1});
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
@@ -49,7 +49,20 @@ class CompoundPathEntityFactory {
         const newCompound = this.create(entityId, visible, style, active);
         newCompound.firstPathId = fId;
         newCompound.nbPath = pathIds.length;
+        this.setLenght(newCompound);
         return newCompound;
+    }
+
+    public setLenght(cPath: CompoundPathComponent) {
+        const points: vec2[] = [];
+        const fromIndex = this.pathEntityFactory.pathPool.keys.get(cPath.firstPathId);
+        if (fromIndex === undefined) {
+            throw Error("first point id not found in the point pool");
+        }
+        for (let i = fromIndex; i < cPath.nbPath; ++i) {
+            length += this.pathEntityFactory.pathPool.values[i].length;
+        }
+        cPath.length = length;
     }
 
     public getLastPathId(): number {

@@ -1,5 +1,5 @@
 import { ComponentFactory } from "ecs-framework";
-import { PathComponent, pathType } from "./PathComponent";
+import { computeLength, PathComponent, pathType } from "./PathComponent";
 import { PointComponent } from "./PointComponent";
 export { PathEntityFactory };
 import { vec2 } from "gl-matrix";
@@ -15,7 +15,7 @@ class PathEntityFactory {
      * @param pathPool path component pool to be used by the PathEntityFactory for creating path component
      */
     constructor(pointPoolSize: number, pathPoolSize: number, pointPool?: ComponentFactory<PointComponent>, pathPool?: ComponentFactory<PathComponent>) {
-        this.pathPool = pathPool || new ComponentFactory<PathComponent>(pathPoolSize, PathComponent, pathType.polyline, 0, 0);
+        this.pathPool = pathPool || new ComponentFactory<PathComponent>(pathPoolSize, PathComponent, pathType.polyline, 0, 0, 0);
         this.pointPool = pointPool || new ComponentFactory<PointComponent>(pointPoolSize, PointComponent, vec2.fromValues(0.0, 0.0));
     }
     public createPathComponent(entityId: number, firstPointId: number, nbPoints: number, type: pathType, active = true): PathComponent {
@@ -23,6 +23,7 @@ class PathEntityFactory {
         c.firstPtId = firstPointId;
         c.nbPt = nbPoints;
         c.type = type;
+        this.setLength(c);
         return c;
     }
     public create(entityId: number, points: vec2[], type: pathType ): PathComponent {
@@ -38,8 +39,23 @@ class PathEntityFactory {
         c.type = type;
         c.firstPtId = firstPointId;
         c.nbPt = l;
-
+        c.length = computeLength(points, type);
         return c;
+    }
+    /**
+     * Compute the length and set the length proprety of the component
+     * @param path the path component to set the length to
+     */
+    public setLength(path: PathComponent) {
+        const points: vec2[] = [];
+        const from = this.pointPool.keys.get(path.firstPtId);
+        if (from === undefined) {
+            throw Error("first point id not found in the point pool");
+        }
+        for (let i = from; i < path.nbPt; ++i) {
+            points.push(this.pointPool.values[i].point);
+        }
+        path.length = computeLength(points, path.type);
     }
     /**
      * Return a Path component from the pathComponent pool
