@@ -63,6 +63,7 @@ describe("SVG path", () => {
 
         });
     });
+    describe("Import group of path", () => {});
 });
 
 // convert absolute points to relative poitns
