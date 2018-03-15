@@ -16,13 +16,6 @@ const cubicBezierUtil = {
         vec2.scaleAndAdd(p, p, p3, ttt);
         return p;
     },
-    interpolationAtPoint(t: number, p0: vec2, p1: vec2, p2: vec2, p3: vec2, out: vec2) {
-        // P(double t) => A + 3.0 * t * (B - A) + 3.0 * t * t * (C - 2.0 * B + A) + t * t * t * (D - 3.0 * C + 3.0 * B - A);
-        // p0+3*t * (p1 - p0) + 3 * t * t * (p2 - 2 * p1 + p0) + t * t * t * (p3 - 3 * p2 + 3 * p1 - p0);
-        // const bSuba = vec2.create();
-        // vec2.sub(bSuba, p1, p0);
-        // vec2.scaleAndAdd()
-    },
     // Slow
     lengthByLineInterpolation(p0: vec2, p1: vec2, p2: vec2, p3: vec2, precision: number) {
         const dt = precision / vec2.distance(p0, p3);
