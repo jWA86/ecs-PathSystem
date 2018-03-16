@@ -52,7 +52,7 @@ class PathEntityFactory {
         if (from === undefined) {
             throw Error("first point id not found in the point pool");
         }
-        for (let i = from; i < path.nbPt; ++i) {
+        for (let i = from; i < from + path.nbPt; ++i) {
             points.push(this.pointPool.values[i].point);
         }
         path.length = computeLength(points, path.type);
@@ -65,8 +65,20 @@ class PathEntityFactory {
         return this.pathPool.get(entityId);
     }
 
+    // should a method of pool
     public getLastPathId(): number {
         if (this.pathPool.iterationLength === 0) { return 0; }
         return this.pathPool.values[this.pathPool.iterationLength - 1].entityId;
     }
+
+    /**
+     * Return the index in point values of the last point of a path
+     * @param pathId
+     */
+    public getLastPointIndex(path: PathComponent): number {
+
+        let index = this.pointPool.keys.get(path.firstPtId);
+        return index += path.nbPt;
+    }
+
 }

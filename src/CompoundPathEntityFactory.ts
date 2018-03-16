@@ -4,6 +4,7 @@ import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 export { CompoundPathEntityFactory };
 import { mat4, vec2 } from "gl-matrix";
+import { PointComponent } from "./PointComponent";
 
 class CompoundPathEntityFactory {
     public componentPool: ComponentFactory<CompoundPathComponent>;
@@ -59,12 +60,32 @@ class CompoundPathEntityFactory {
         if (fromIndex === undefined) {
             throw Error("first point id not found in the point pool");
         }
-        for (let i = fromIndex; i < cPath.nbPath; ++i) {
-            length += this.pathEntityFactory.pathPool.values[i].length;
+        let previousType: pathType;
+        let previousPt: PointComponent;
+        const l = [];
+        let length = 0;
+        for (let i = fromIndex; i < fromIndex + cPath.nbPath; ++i) {
+            const p = this.pathEntityFactory.pathPool.values[i];
+            length += p.length;
+            // refactoring can extract to "computeLink()"
+            // unless 2 consecutives cubic bezier curve, there is a link between two path that must be taken into account
+            if (p.type === pathType.cubicBezier && previousType === pathType.cubicBezier) {
+
+            } else if ( i > fromIndex ) {
+                // compute the length of the link between the last point of the previous path and the first of the current path
+                const p0 = previousPt;
+                const p1 = this.pathEntityFactory.pointPool.get(p.firstPtId);
+                const dist = vec2.distance(p0.point, p1.point);
+                length += dist;
+            }
+            previousType = p.type;
+            const index = this.pathEntityFactory.getLastPointIndex(p);
+            previousPt = this.pathEntityFactory.pointPool.get(index);
         }
         cPath.length = length;
     }
 
+    // should be a method of the pool
     public getLastPathId(): number {
         if (this.componentPool.iterationLength === 0) { return 0; }
         return this.componentPool.values[this.componentPool.iterationLength - 1].entityId;

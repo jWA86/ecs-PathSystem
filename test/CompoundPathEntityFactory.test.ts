@@ -48,6 +48,8 @@ describe("CompoundPathEntityFactory ", () => {
         describe("create", () => {
             const cubicBezierPts1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
             const cubicBezierPts2 = [vec2.fromValues(250, 200), vec2.fromValues(250, 300), vec2.fromValues(400, 300), vec2.fromValues(400, 200)];
+            const segmentPts1 = [vec2.fromValues(0.0, 0.0), vec2.fromValues(100.0, 100.0), vec2.fromValues(200.0, 100.0), vec2.fromValues(300.0, 200.0)];
+            const segmentPts2 = [vec2.fromValues(300.0, 300.0), vec2.fromValues(200.0, 400.0), vec2.fromValues(100.0, 400.0), vec2.fromValues(0.0, 500.0)];
             it("be able to create a new compoundPath component in the compondPath pool", () => {
                 compoundEntityFactory.create(1);
                 expect(compoundEntityFactory.componentPool.get(1).entityId).to.equal(1);
@@ -66,12 +68,25 @@ describe("CompoundPathEntityFactory ", () => {
                 expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pointPool.nbCreated).to.equal(cubicBezierPts1.length + cubicBezierPts2.length);
             });
-            it("createFromPaths should set the length of the compoundPath as the sum of all the its paths", () => {
+            it("createFromPaths should set the length of the compoundPath as the sum of all the its paths + any link path", () => {
                 const pathEntityFactory = new PathEntityFactory(100, 10);
                 const p1 = pathEntityFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                 const p2 = pathEntityFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, [p1.entityId, p2.entityId]);
-                expect(res.length).to.approximately(p1.length + p2.length, 0.1);
+                const p3 = pathEntityFactory.create(3, segmentPts1, pathType.polyline);
+                const p4 = pathEntityFactory.create(4, segmentPts2, pathType.polyline);
+
+                // a link is created when a bezier curve is associated with an other path type
+                // distande between last of previous and first of next
+                const linkDist1 = vec2.distance(cubicBezierPts2[cubicBezierPts2.length - 1], segmentPts1[0]);
+                const linkDist2 = vec2.distance(segmentPts1[segmentPts1.length - 1], segmentPts2[0]);
+                const linkDist3 = vec2.distance(segmentPts2[segmentPts2.length - 1], cubicBezierPts2[0]);
+
+                const composition = [p1.entityId, p2.entityId, p3.entityId, p4.entityId, p2.entityId];
+                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, composition);
+
+                const expectedLength = p1.length + p2.length + linkDist1 + p3.length + linkDist2 + p4.length + linkDist3 + p2.length;
+
+                expect(res.length).to.approximately(expectedLength, 0.1);
             });
         });
         describe("createPathAt() should", () => {
