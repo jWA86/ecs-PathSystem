@@ -12,7 +12,7 @@ class CompoundPathEntityFactory {
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
     constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create(), {from: 0, to: 1});
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create(), { from: 0, to: 1 });
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
@@ -69,9 +69,7 @@ class CompoundPathEntityFactory {
             length += p.length;
             // refactoring can extract to "computeLink()"
             // unless 2 consecutives cubic bezier curve, there is a link between two path that must be taken into account
-            if (p.type === pathType.cubicBezier && previousType === pathType.cubicBezier) {
-
-            } else if ( i > fromIndex ) {
+            if (!(p.type === pathType.cubicBezier && previousType === pathType.cubicBezier) && i > fromIndex) {
                 // compute the length of the link between the last point of the previous path and the first of the current path
                 const p0 = previousPt;
                 const p1 = this.pathEntityFactory.pointPool.get(p.firstPtId);
