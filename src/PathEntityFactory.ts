@@ -1,8 +1,9 @@
 import { ComponentFactory } from "ecs-framework";
-import { computeLength, PathComponent, pathType } from "./PathComponent";
+import { computeLength, getPointAt, PathComponent, pathType } from "./PathComponent";
 import { PointComponent } from "./PointComponent";
 export { PathEntityFactory };
 import { vec2 } from "gl-matrix";
+import { cubicBezierUtil } from "./BezierUtil";
 
 // Handle CRUD operations on PathComponentPool and PointComponentPool
 class PathEntityFactory {
@@ -65,10 +66,15 @@ class PathEntityFactory {
         return this.pathPool.get(entityId);
     }
 
-    // should a method of pool
+    // should be a method of pool
     public getLastPathId(): number {
         if (this.pathPool.iterationLength === 0) { return 0; }
         return this.pathPool.values[this.pathPool.iterationLength - 1].entityId;
+    }
+
+    public getFirstPointIndex(path: PathComponent): number {
+        // throw error if undefined ?
+        return this.pointPool.keys.get(path.firstPtId);
     }
 
     /**
@@ -81,4 +87,13 @@ class PathEntityFactory {
         return index += path.nbPt;
     }
 
+    public getPointAt = (t: number, path: PathComponent) => {
+        const points: vec2[] = [];
+        // case fromIndex is undefined ?
+        const fromIndex = this.getFirstPointIndex(path);
+        for (let i = fromIndex; i < fromIndex + path.nbPt; ++i ) {
+            points.push(this.pointPool.values[i].point);
+        }
+        return getPointAt(t, points, path.type, path.length);
+    }
 }

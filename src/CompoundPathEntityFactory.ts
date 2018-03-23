@@ -89,6 +89,51 @@ class CompoundPathEntityFactory {
         return this.componentPool.values[this.componentPool.iterationLength - 1].entityId;
     }
 
+    public getPointAt(t: number, cPath: CompoundPathComponent) {
+        // t distance relative to the compoundPath lenght
+        const tLength = t * cPath.length;
+        const fromIndex = this.getFirstPathIndex(cPath);
+        let accumulatedLength = 0;
+        for (let i = fromIndex; i < fromIndex + cPath.nbPath; ++i) {
+            const path = this.pathEntityFactory.pathPool.values[i];
+            // console.log(path);
+            accumulatedLength += path.length;
+            // console.log(accumulatedLength + " " + tLength);
+            if (accumulatedLength >= tLength) {
+                const pathStart = accumulatedLength - path.length;
+                // console.log(pathStart + " " + tLength);
+                if (pathStart < tLength) {
+                    console.log(pathStart + " " + tLength);
+                    // the point lies on a path
+                    // normalized t relative to the pathLenght
+                    const normT = Math.abs((tLength - pathStart) / path.length);
+                    const res = this.pathEntityFactory.getPointAt(normT, path);
+                    return res;
+                } else {
+                    // the point lies on a link between 2 paths
+                    // get last point of current path
+                    // get fisrt point of next path // check that it's not the last path because t > 1
+                    console.log("link");
+                    const nextPath = this.pathEntityFactory.pathPool.values[i + 1];
+                    if ( nextPath !== undefined) {
+                        const startPointIndex = this.pathEntityFactory.getLastPointIndex(path);
+                        const startPoint = this.pathEntityFactory.pointPool.values[startPointIndex].point;
+                        const endPoint = this.pathEntityFactory.pointPool.get(nextPath.firstPtId).point;
+                        const normT = 0;
+                        console.log(startPoint + " " + endPoint);
+                        const res = vec2.create();
+                        return vec2.lerp(res, startPoint, endPoint, normT);
+                        // return lineInterpolation(normT, startPoint, endPoint);
+                    }
+                }
+            }
+        }
+    }
+
+    public getFirstPathIndex(cPath: CompoundPathComponent): number {
+        return this.pathEntityFactory.pathPool.keys.get(cPath.firstPathId);
+    }
+
     /** Copy paths components and their corresponding points from an inpute PathEntityFactory to the PathEntityFactory of the CompoundFactory
      * Return the pathId of the first path
      * @param inputPathFactory
