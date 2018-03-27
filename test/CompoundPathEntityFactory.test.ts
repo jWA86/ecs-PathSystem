@@ -67,29 +67,24 @@ describe("CompoundPathEntityFactory ", () => {
                 const pathEntityFactory = new PathEntityFactory(100, 10);
                 const p1 = pathEntityFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                 const p2 = pathEntityFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, [p1.entityId, p2.entityId]);
+                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, [p1.entityId, p2.entityId], false);
                 expect(res.firstPathId).to.equal(1);
                 expect(res.nbPath).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pathPool.nbCreated).to.equal(2);
                 expect(compoundEntityFactory.pathEntityFactory.pointPool.nbCreated).to.equal(cubicBezierPts1.length + cubicBezierPts2.length);
             });
-            it("createFromPaths should set the length of the compoundPath as the sum of all the its paths + any link path", () => {
+            it("createFromPaths should set the length of the compoundPath as the sum of all the its paths", () => {
                 const pathEntityFactory = new PathEntityFactory(100, 10);
                 const pBezier1 = pathEntityFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                 const pBezier2 = pathEntityFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
                 const pPolyLine1 = pathEntityFactory.create(3, segmentPts1, pathType.polyline);
                 const pPolyLine2 = pathEntityFactory.create(4, segmentPts2, pathType.polyline);
 
-                // a link is created when a bezier curve is associated with an other path type
-                // distande between last of previous and first of next
-                const linkDist1 = vec2.distance(cubicBezierPts2[cubicBezierPts2.length - 1], segmentPts1[0]);
-                const linkDist2 = vec2.distance(segmentPts1[segmentPts1.length - 1], segmentPts2[0]);
-                const linkDist3 = vec2.distance(segmentPts2[segmentPts2.length - 1], cubicBezierPts2[0]);
-
                 const composition = [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId, pPolyLine2.entityId, pBezier2.entityId];
-                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, composition);
+                const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, composition, true);
 
-                const expectedLength = pBezier1.length + pBezier2.length + linkDist1 + pPolyLine1.length + linkDist2 + pPolyLine2.length + linkDist3 + pBezier2.length;
+                console.log("refactor length");
+                const expectedLength = pBezier1.length + pBezier2.length + pPolyLine1.length + pPolyLine2.length  + pBezier2.length;
 
                 expect(res.length).to.approximately(expectedLength, 0.1);
             });
@@ -121,7 +116,7 @@ describe("CompoundPathEntityFactory ", () => {
                 pPolyLine2 = bufferPathEntity.create(4, segmentPts2, pathType.polyline);
             });
             it("point fall on a bezier curve", () => {
-                const cp = compoundEntityFactory.createFromPaths(1, bufferPathEntity, [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId]);
+                const cp = compoundEntityFactory.createFromPaths(1, bufferPathEntity, [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId], false);
                 const t = (pBezier1.length * 0.5 ) / cp.length;
                 const res = compoundEntityFactory.getPointAt(t, cp);
                 // point should be the middle point of the first bezier curve
@@ -131,21 +126,13 @@ describe("CompoundPathEntityFactory ", () => {
 
             });
             it("point fall on a polyline", () => {
-                const cp = compoundEntityFactory.createFromPaths(1, bufferPathEntity, [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId]);
+                const cp = compoundEntityFactory.createFromPaths(1, bufferPathEntity, [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId], false);
                 // point fall on the third path which is a polyline
                 const t = ((pPolyLine1.length * 0.5 ) + pBezier1.length + pBezier2.length) / cp.length;
                 const res = compoundEntityFactory.getPointAt(t, cp);
                 // point should be between 2 control points of the polyline
                 expect(isPointOnPolyline(res, segmentPts1)).to.equal(true);
             });
-            it("point fall on a link between two path", () => {
-                const cp = compoundEntityFactory.createFromPaths(1, bufferPathEntity, [pPolyLine1.entityId, pPolyLine2.entityId]);
-                // middle of the link between polyLine1 and polyLine2
-                const t = (( ( cp.length - (pPolyLine1.length + pPolyLine2.length) ) * 0.5 ) + pPolyLine1.length )  / cp.length;
-                const res = compoundEntityFactory.getPointAt(t, cp);
-                // link is between last point of p1 and first of p2
-                expect(isPointOnPolyline(res, [segmentPts1[segmentPts1.length - 1], segmentPts2[0]])).to.equal(true);
-             });
         });
     });
 });

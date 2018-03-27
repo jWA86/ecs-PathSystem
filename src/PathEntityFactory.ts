@@ -28,8 +28,8 @@ class PathEntityFactory {
         return c;
     }
     public create(entityId: number, points: vec2[], type: pathType ): PathComponent {
-        if (points.length < 1) {throw Error("a path mush have at least 1 point"); }
-        // If(this.pathPool.has(entityId)){throw new Error("a path entity with this Id already exist");}
+        if (points.length < 1) {throw Error("a path mush have at least 1 points"); }
+
         const firstPointId = this.pointPool.nbCreated + 1;
         const l = points.length;
         for (let i = 0; i < l; ++i) {

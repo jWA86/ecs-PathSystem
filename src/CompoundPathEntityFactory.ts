@@ -40,6 +40,7 @@ class CompoundPathEntityFactory {
      * @param active
      */
     public createFromPaths(entityId: number, sourcePathFactory: PathEntityFactory, pathIds: number[], visible: boolean = true, style = this.defaultStyle, active = true) {
+
         const beforeNbComp = this.pathEntityFactory.pathPool.nbCreated;
         // copy paths before creating new compoundPath component
         const fId = this.copyPaths(sourcePathFactory, pathIds);
@@ -60,25 +61,11 @@ class CompoundPathEntityFactory {
         if (fromIndex === undefined) {
             throw Error("first point id not found in the point pool");
         }
-        let previousType: pathType;
-        let previousPt: PointComponent;
         const l = [];
         let length = 0;
         for (let i = fromIndex; i < fromIndex + cPath.nbPath; ++i) {
             const p = this.pathEntityFactory.pathPool.values[i];
             length += p.length;
-            // refactoring can extract to "computeLink()"
-            // unless 2 consecutives cubic bezier curve, there is a link between two path that must be taken into account
-            if (!(p.type === pathType.cubicBezier && previousType === pathType.cubicBezier) && i > fromIndex) {
-                // compute the length of the link between the last point of the previous path and the first of the current path
-                const p0 = previousPt;
-                const p1 = this.pathEntityFactory.pointPool.get(p.firstPtId);
-                const dist = vec2.distance(p0.point, p1.point);
-                length += dist;
-            }
-            previousType = p.type;
-            const index = this.pathEntityFactory.getLastPointIndex(p);
-            previousPt = this.pathEntityFactory.pointPool.get(index);
         }
         cPath.length = length;
     }
@@ -109,22 +96,6 @@ class CompoundPathEntityFactory {
                     const normT = Math.abs((tLength - pathStart) / path.length);
                     const res = this.pathEntityFactory.getPointAt(normT, path);
                     return res;
-                } else {
-                    // the point lies on a link between 2 paths
-                    // get last point of current path
-                    // get fisrt point of next path // check that it's not the last path because t > 1
-                    console.log("link");
-                    const nextPath = this.pathEntityFactory.pathPool.values[i + 1];
-                    if ( nextPath !== undefined) {
-                        const startPointIndex = this.pathEntityFactory.getLastPointIndex(path);
-                        const startPoint = this.pathEntityFactory.pointPool.values[startPointIndex].point;
-                        const endPoint = this.pathEntityFactory.pointPool.get(nextPath.firstPtId).point;
-                        const normT = 0;
-                        console.log(startPoint + " " + endPoint);
-                        const res = vec2.create();
-                        return vec2.lerp(res, startPoint, endPoint, normT);
-                        // return lineInterpolation(normT, startPoint, endPoint);
-                    }
                 }
             }
         }
@@ -150,10 +121,12 @@ class CompoundPathEntityFactory {
             // iterate on the buffer points pool and copy points
             // create a new pathC
             // set firstPointId and nbPt on the newly created pathC
+
             const path = inputPathFactory.getPathComponent(id);
             const fromIndex = inputPathFactory.pointPool.keys.get(path.firstPtId);
             const firstPtId = this.pathEntityFactory.pointPool.nbCreated + 1;
             let newId = firstPtId - 1;
+
             // copy points
             for (let i = fromIndex; i < fromIndex + path.nbPt; ++i) {
                 newId += 1;

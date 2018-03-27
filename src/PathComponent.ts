@@ -53,7 +53,6 @@ const polyLineInterpolation = (t: number, points: vec2[], pathLength: number) =>
         if (t <= (accumulatedDist / pathLength) ) {
             const res = vec2.create();
             return vec2.lerp(res, points[i], points[ i + 1], t);
-            // return lineInterpolation(t, points[i], points[i + 1]);
         }
     }
 };

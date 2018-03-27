@@ -32,7 +32,7 @@ class CompoundPathRendererSystem extends System {
         // Iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
 
-        const previousTrace = { point: undefined, type: pathType.polyline };
+        // const previousTrace = { point: undefined, type: pathType.polyline };
         let accumulatedLength = 0;
         let firstPathTraced = false;
         // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
@@ -54,7 +54,7 @@ class CompoundPathRendererSystem extends System {
                 // const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 const normFrom = this.normalFrom(accumulatedLength, path.length, from);
                 const normTo = 1;
-                this.trace({ from: normFrom, to: normTo }, path, previousTrace);
+                this.trace(path, { from: normFrom, to: normTo });
                 firstPathTraced = true;
             } else if (accumulatedLength >= to && !firstPathTraced) {
                 // When trim begin and end on the same path
@@ -63,7 +63,7 @@ class CompoundPathRendererSystem extends System {
                 // from from the begining of this path in normalized form
                 const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 const normTo = (path.length - to) / path.length;
-                this.trace({ from: normFrom, to: normTo }, path, previousTrace);
+                this.trace(path, { from: normFrom, to: normTo });
                 firstPathTraced = true;
                 break;
             } else if (accumulatedLength >= to && firstPathTraced) {
@@ -72,7 +72,7 @@ class CompoundPathRendererSystem extends System {
                 // trim (0, to)
                 const normFrom = 0;
                 const normTo = 1 - (accumulatedLength - to) / path.length;
-                this.trace({ from: normFrom, to: normTo }, path, previousTrace);
+                this.trace(path, { from: normFrom, to: normTo });
                 break;
             }
         }
@@ -92,64 +92,53 @@ class CompoundPathRendererSystem extends System {
         const l = (pathLength - (accumulatedLength - from)) / pathLength;
         return (l < 0) ? 0 : l;
     }
-    protected trace(trim: IRange, path: PathComponent, previousTrace: { point: vec2, type: pathType }) {
-        if (path.type === pathType.polyline) {
-            previousTrace.point = this.tracePolyLine(path, previousTrace.point, trim);
-            previousTrace.type = pathType.polyline;
-        } else if (path.type === pathType.cubicBezier) {
-            previousTrace.point = this.traceCubicBezier(path, previousTrace.type, previousTrace.point, trim);
-            previousTrace.type = pathType.cubicBezier;
+    protected trace(path: PathComponent, trim: IRange) {
+        switch (path.type) {
+            case pathType.polyline:
+                this.tracePolyLine(path, trim);
+                break;
+            case pathType.cubicBezier:
+                this.traceCubicBezier(path, trim);
+                break;
+            default:
+                break;
         }
     }
     /**
-     * lineTo points of pathComponent from a position.
-     * @param path
-     * @param from position to draw from, if it's not provided we draw from the first point of the path
+     * lineTo points of pathComponent
      */
-    protected tracePolyLine(path: PathComponent, origin?: vec2, trim = { from: 0, to: 1 }): vec2 {
+    protected tracePolyLine(path: PathComponent, trim = { from: 0, to: 1 }) {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
         let pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
-        origin = origin || pt;
-        this.context.moveTo(origin[CONF.X], origin[CONF.Y]);
-        for (let j = firstPtIndex; j < firstPtIndex + path.nbPt; ++j) {
+        this.context.moveTo(pt[CONF.X], pt[CONF.Y]);
+        for (let j = firstPtIndex + 1; j < firstPtIndex + path.nbPt; ++j) {
             pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[j].point;
             this.context.lineTo(pt[CONF.X], pt[CONF.Y]);
         }
-        return pt;
     }
 
-    protected traceTrimPolyline(path: PathComponent, trim: IRange, from?: vec2) {
-        // determine the firstPoint to render from based on trim information
-        // than which point to skip and which to render
-
-        // case from !== 0 and there is a link
-        // case to !== 1
-    }
-
-    protected traceCubicBezier(path: PathComponent, previousType: pathType, origin?: vec2, trim = { from: 0, to: 1 }): vec2 {
+    protected traceCubicBezier(path: PathComponent, trim = { from: 0, to: 1 }) {
         const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
-        const pt0 = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
-        if (trim.from === 0) {
-            origin = origin || pt0;
-            this.context.moveTo(origin[CONF.X], origin[CONF.Y]);
-            // if the previous path was a polyline lineTo the first point of the bezier curve
-            if (previousType === pathType.polyline) {
-                this.context.lineTo(pt0[CONF.X], pt0[CONF.Y]);
-            }
+        const firstPtIndex2 = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
+        if (firstPtIndex !== firstPtIndex2) {
+            throw Error("error getting fist point index");
         }
 
         const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
-
+        const pt0 = pool[firstPtIndex].point;
         const pt1 = pool[firstPtIndex + 1].point;
         const pt2 = pool[firstPtIndex + 2].point;
         const pt3 = pool[firstPtIndex + 3].point;
         const out: vec2[] = [];
-        cubicBezierUtil.trim(trim.from, trim.to, pt0, pt1, pt2, pt3, out);
-        if (trim.from !== 0) {
-            this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
+        // no trim necessary
+        if (trim.from === 0 && trim.to === 1) {
+            this.context.moveTo(pt0[CONF.X], pt0[CONF.Y]);
+            this.context.bezierCurveTo(pt1[CONF.X], pt1[CONF.Y], pt2[CONF.X], pt2[CONF.Y], pt3[CONF.X], pt3[CONF.Y]);
         }
-        // this.context.bezierCurveTo(pt1[CONF.X], pt1[CONF.Y], pt2[CONF.X], pt2[CONF.Y], pt3[CONF.X], pt3[CONF.Y]);
-        this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
-        return pt3;
+        if (trim.from !== 0 || trim.to !== 1) {
+            cubicBezierUtil.trim(trim.from, trim.to, pt0, pt1, pt2, pt3, out);
+            this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
+            this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
+        }
     }
 }

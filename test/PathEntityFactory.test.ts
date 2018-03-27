@@ -77,7 +77,7 @@ describe("PathEntityFactory ", () => {
 
         });
         it("return a PathComponent", () => {
-            const res: any = entityFactory.create(1, [vec2.fromValues(1.0, 1.0)], pathType.polyline);
+            const res: any = entityFactory.create(1, [vec2.create(), vec2.fromValues(1.0, 1.0)], pathType.polyline);
             expect(res instanceof PathComponent).to.equal(true);
             expect(res.entityId).to.equal(1);
         });
@@ -124,15 +124,15 @@ describe("PathEntityFactory ", () => {
     describe("get ", () => {
         it("getPathComponent should return the Path Component with the id provided", () => {
             const entityFactory = new PathEntityFactory(100, 10);
-            entityFactory.create(1, [vec2.create()], pathType.polyline);
-            entityFactory.create(2, [vec2.create()], pathType.cubicBezier);
+            entityFactory.create(1, [vec2.create(), vec2.create()], pathType.polyline);
+            entityFactory.create(2, [vec2.create(), vec2.create()], pathType.cubicBezier);
             expect(entityFactory.getPathComponent(2).type).to.equal(pathType.cubicBezier);
 
         });
         it("getLastPathId should return the id of the last path component in the pool, so we can work with incremental id", () => {
             const entityFactory = new PathEntityFactory(100, 10);
-            entityFactory.create(3, [vec2.create()], pathType.polyline);
-            entityFactory.create(1, [vec2.create()], pathType.cubicBezier);
+            entityFactory.create(3, [vec2.create(), vec2.create()], pathType.polyline);
+            entityFactory.create(1, [vec2.create(), vec2.create()], pathType.cubicBezier);
             expect(entityFactory.pathPool.nbCreated).to.equal(2);
             expect(entityFactory.getLastPathId()).to.equal(1);
         });

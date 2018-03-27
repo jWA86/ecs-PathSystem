@@ -58,7 +58,7 @@ describe("Renderer", () => {
         it("render a polyline path from a compoundPath component", () => {
             const cId = 1;
             bufferPathFactory.create(1, segmentPts1, pathType.polyline);
-            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1]);
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1], false);
 
             renderSys.process();
 
@@ -70,10 +70,9 @@ describe("Renderer", () => {
         });
         it("render multiple polyline paths from a compoundPath component", () => {
             const cId = 1;
-            console.log("here");
             bufferPathFactory.create(1, segmentPts1, pathType.polyline);
             bufferPathFactory.create(2, segmentPts2, pathType.polyline);
-            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2], false);
 
             renderSys.process();
 
@@ -95,7 +94,7 @@ describe("Renderer", () => {
             const cId = 1;
 
             bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
-            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1]);
+            const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1], false);
 
             renderSys.process();
 
@@ -123,10 +122,8 @@ describe("Renderer", () => {
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
         });
-        it("render a compound path composed of polyline paths and bezier paths linked", () => {
+        it("render a compound path composed of polyline paths and bezier paths", () => {
             const cId = 1;
-            console.log("refactor here");
-            // have to specify we want link to be created on creating of compoundPath
             bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
             bufferPathFactory.create(2, segmentPts2, pathType.polyline);
             bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
@@ -135,14 +132,7 @@ describe("Renderer", () => {
 
             renderSys.process();
 
-            // when cubic bezier follow a polyline we should not skip the first points of the cubic bezier
             samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
-                const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                refImgPixelColorChecking(data, 255, 0, 0, 255);
-            });
-
-            const link1 = [cubicBezierPts1[cubicBezierPts1.length - 1], segmentPts1[0]];
-            samplePath({from: 0, to: 1}, 5, link1, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -152,19 +142,7 @@ describe("Renderer", () => {
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            const link2 = [segmentPts1[segmentPts1.length - 1], cubicBezierPts2[0]];
-            samplePath({from: 0, to: 1}, 5, link2, pathType.polyline, (pt) => {
-                const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                refImgPixelColorChecking(data, 255, 0, 0, 255);
-            });
-
             samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                refImgPixelColorChecking(data, 255, 0, 0, 255);
-            });
-
-            const link3 = [cubicBezierPts2[cubicBezierPts2.length - 1], segmentPts2[0]];
-            samplePath({from: 0, to: 1}, 5, link3, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -185,14 +163,14 @@ describe("Renderer", () => {
             bufferPathFactory.create(2, segmentPts2, pathType.polyline);
             bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
 
-            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [2, 3]);
+            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [2, 3], false);
 
             const tx = 50;
             const ty = 50;
             mat4.translate(cp1.transform, cp1.transform, [tx, ty, 1]);
 
             // create a second component and make sure it doesn't undergo the previous transformation
-            const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1]);
+            const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1], false);
             renderSys.process();
 
             samplePath({from: 0, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
@@ -217,13 +195,13 @@ describe("Renderer", () => {
             bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
             // make the linewidth biger since we downscale, so we avoid sampling a pixel on the border of the line which would be of lighter color than the center of the line
             cPool.defaultStyle.lineWidth = 10;
-            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [2, 3]);
+            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [2, 3], false);
             const sx = 0.5;
             const sy = 0.5;
             mat4.scale(cp1.transform, cp1.transform, [sx, sy, 1]);
 
             // create a second component and make sure it's undergo the previous transformation
-            const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1]);
+            const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1], false);
 
             renderSys.process();
 
@@ -249,7 +227,7 @@ describe("Renderer", () => {
             // bufferPathFactory.create(2, segmentPts2, pathType.polyline);
             bufferPathFactory.create(3, bezierC, pathType.cubicBezier);
             // make the linewidth biger since we downscale, so we avoid sampling a pixel on the border of the line which would be of lighter color than the center of the line
-            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [3]);
+            const cp1 = cPool.createFromPaths(1, bufferPathFactory, [3], false);
 
             // Translate then rotate so it render at the place as of cubicBezier 1
             mat4.translate(cp1.transform, cp1.transform, [cubicBezierPts2[0][0], cubicBezierPts2[0][1], 1]);
@@ -283,7 +261,7 @@ describe("Renderer", () => {
 
                     bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                     bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2], false);
                     const totalLength = cp1.length;
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentOfLastPath = 0.5;
@@ -299,14 +277,6 @@ describe("Renderer", () => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
-
-                    // verify that any link are not rendered
-                    // checking that no link are created from the 0, 0 position
-                    // since it's the default position when no previous point are passed to the trace function
-                    console.log("refactor here");
-                    // should not have to be test since link would be a path component after refactoring
-                    const pix = ctx.getImageData(0, 0, 1, 1);
-                    refImgPixelColorChecking(pix, 0, 0, 0, 0);
 
                     // path 2
                     // only the last half should be rendered
@@ -329,7 +299,7 @@ describe("Renderer", () => {
 
                     bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
                     bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2], false);
                     const totalLength = cp1.length;
                     const path1Length = bufferPathFactory.getPathComponent(1).length;
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
@@ -370,7 +340,7 @@ describe("Renderer", () => {
                     });
                     bufferPathFactory.create(3, cubicBezierPts3, pathType.cubicBezier);
 
-                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3]);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3], false);
                     const totalLength = cp1.length;
                     const path1Length = bufferPathFactory.getPathComponent(1).length;
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
@@ -408,13 +378,14 @@ describe("Renderer", () => {
                     });
                 });
             });
-            describe("polyline : ", () => {
+            describe("polyline :", () => {
                 it("render starting last half the last path", () => {
+                    console.log("polyline trim not implemented yet");
                     const cId = 1;
 
                     bufferPathFactory.create(1, segmentPts1, pathType.polyline);
                     bufferPathFactory.create(2, segmentPts2, pathType.polyline);
-                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2], false);
                     const totalLength = cp1.length;
                     const path1Length = bufferPathFactory.getPathComponent(1).length;
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
@@ -424,14 +395,13 @@ describe("Renderer", () => {
                     cp1.trim.from = trimPercent;
 
                     renderSys.process();
-                    console.log("refactor here");
-                    // after refectoring, test should pass since compoundPath length should not include link lenght
+
                     samplePath({from: 0, to: 1}, 5, segmentPts1, pathType.polyline, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
-                    samplePath({from: 0, to: 0.45}, 5, segmentPts2, pathType.polyline, (pt) => {
+                    samplePath({from: 0, to: 0.5}, 5, segmentPts2, pathType.polyline, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
@@ -463,10 +433,7 @@ describe("Renderer", () => {
 
                 renderSys.process();
 
-                // verify that no link is created from 0,0
-                let data = ctx.getImageData(0, 0, 1, 1);
-                refImgPixelColorChecking(data, 0, 0, 0, 0);
-
+                let data;
                 // p1 should be fully rendered
                 samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                     data = ctx.getImageData(pt[X], pt[Y], 1, 1);
@@ -500,10 +467,7 @@ describe("Renderer", () => {
 
                 renderSys.process();
 
-                // verify that no link is created from 0,0
-                let data = ctx.getImageData(0, 0, 1, 1);
-                refImgPixelColorChecking(data, 0, 0, 0, 0);
-
+                let data;
                 // p1 should be rendered only to its half
                 samplePath({from: 0, to: 0.5}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                     data = ctx.getImageData(pt[X], pt[Y], 1, 1);
