@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { vec2 } from "gl-matrix";
 import { pathType } from "../src/PathComponent";
 
-export { refImgPixelColorChecking, samplePath, getPointOnCubicBezier };
+export { isPointOnPolyline, refImgPixelColorChecking, samplePath, getPointOnCubicBezier };
 
 /**
  * Expect the pixel color to equal the given rgb component
@@ -109,4 +109,19 @@ const getPointOnCubicBezier = (t: number, p0: vec2, p1: vec2, p2: vec2, p3: vec2
     vec2.scaleAndAdd(p, p, p3, ttt);
 
     return p;
+};
+
+const isPointOnPolyline = (point: vec2, polyLinePts: vec2[]): boolean => {
+    let onTheLine = false;
+    for (let i = 0; i < polyLinePts.length - 1; ++i) {
+        // y - y1 = slope(x - x1)
+        const slope = ( polyLinePts[i + 1][1] - polyLinePts[i][1] ) / ( polyLinePts[i + 1][0] - polyLinePts[i][0] );
+        const x = slope * (point[0] - polyLinePts[i][0]);
+        const y = point[1] - polyLinePts[i][1];
+        if (x === y) {
+            onTheLine = true;
+            break;
+        }
+    }
+    return onTheLine;
 };

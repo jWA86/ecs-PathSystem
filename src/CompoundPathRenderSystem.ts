@@ -49,17 +49,13 @@ class CompoundPathRendererSystem extends System {
                 continue;
             } else if (accumulatedLength >= from && accumulatedLength <= to) {
                 // When trim begin on this path but end on a next path. or end on this path because it's the last one
-                // console.log("trim(from, 1")" + from + " " + to);
-                // trim(from, 1)
-                // const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 const normFrom = this.normalFrom(accumulatedLength, path.length, from);
                 const normTo = 1;
                 this.trace(path, { from: normFrom, to: normTo });
                 firstPathTraced = true;
             } else if (accumulatedLength >= to && !firstPathTraced) {
                 // When trim begin and end on the same path
-                // trim(from, to)
-                // end the for loop
+
                 // from from the begining of this path in normalized form
                 const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 const normTo = (path.length - to) / path.length;
@@ -69,7 +65,6 @@ class CompoundPathRendererSystem extends System {
             } else if (accumulatedLength >= to && firstPathTraced) {
                 // When trim begin on a previous path and end on this one
 
-                // trim (0, to)
                 const normFrom = 0;
                 const normTo = 1 - (accumulatedLength - to) / path.length;
                 this.trace(path, { from: normFrom, to: normTo });
@@ -108,37 +103,50 @@ class CompoundPathRendererSystem extends System {
      * lineTo points of pathComponent
      */
     protected tracePolyLine(path: PathComponent, trim = { from: 0, to: 1 }) {
-        const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
-        let pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[firstPtIndex].point;
-        this.context.moveTo(pt[CONF.X], pt[CONF.Y]);
-        for (let j = firstPtIndex + 1; j < firstPtIndex + path.nbPt; ++j) {
-            pt = this.compoundPathEntityPool.pathEntityFactory.pointPool.values[j].point;
-            this.context.lineTo(pt[CONF.X], pt[CONF.Y]);
+
+        if (trim.from === 0 && trim.to === 1) {
+            const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
+            const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
+
+            let pt = pool[firstPtIndex].point;
+            this.context.moveTo(pt[CONF.X], pt[CONF.Y]);
+            for (let j = firstPtIndex + 1; j < firstPtIndex + path.nbPt; ++j) {
+                pt = pool[j].point;
+                this.context.lineTo(pt[CONF.X], pt[CONF.Y]);
+            }
+        } else {
+            const out: vec2[] = [];
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
+            for (let j = 1; j < out.length; ++j) {
+                this.context.lineTo(out[j][CONF.X], out[j][CONF.Y]);
+            }
         }
     }
 
     protected traceCubicBezier(path: PathComponent, trim = { from: 0, to: 1 }) {
-        const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.pointPool.keys.get(path.firstPtId);
-        const firstPtIndex2 = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
-        if (firstPtIndex !== firstPtIndex2) {
-            throw Error("error getting fist point index");
-        }
-
-        const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
-        const pt0 = pool[firstPtIndex].point;
-        const pt1 = pool[firstPtIndex + 1].point;
-        const pt2 = pool[firstPtIndex + 2].point;
-        const pt3 = pool[firstPtIndex + 3].point;
-        const out: vec2[] = [];
-        // no trim necessary
-        if (trim.from === 0 && trim.to === 1) {
-            this.context.moveTo(pt0[CONF.X], pt0[CONF.Y]);
-            this.context.bezierCurveTo(pt1[CONF.X], pt1[CONF.Y], pt2[CONF.X], pt2[CONF.Y], pt3[CONF.X], pt3[CONF.Y]);
-        }
+        // trim
         if (trim.from !== 0 || trim.to !== 1) {
-            cubicBezierUtil.trim(trim.from, trim.to, pt0, pt1, pt2, pt3, out);
+            const out: vec2[] = [];
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            // cubicBezierUtil.trim(trim.from, trim.to, pt0, pt1, pt2, pt3, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
+        } else {
+            // no trim
+            // get points from factory,
+            // move to first point
+            // trace the bezier curve
+            const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
+            const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
+            const pt0 = pool[firstPtIndex].point;
+            const pt1 = pool[firstPtIndex + 1].point;
+            const pt2 = pool[firstPtIndex + 2].point;
+            const pt3 = pool[firstPtIndex + 3].point;
+
+            this.context.moveTo(pt0[CONF.X], pt0[CONF.Y]);
+
+            this.context.bezierCurveTo(pt1[CONF.X], pt1[CONF.Y], pt2[CONF.X], pt2[CONF.Y], pt3[CONF.X], pt3[CONF.Y]);
         }
     }
 }

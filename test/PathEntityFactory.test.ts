@@ -2,9 +2,11 @@ import { expect } from "chai";
 import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
+import { X, Y } from "../src/config";
 import { PathComponent, pathType  } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
+import { isPointOnPolyline } from "./CanvasTestHelper";
 
 describe("PathEntityFactory ", () => {
 
@@ -158,5 +160,73 @@ describe("PathEntityFactory ", () => {
             expect(res.length).to.equal(dist);
         });
     });
+    describe("Trim path", () => {
+        describe("Polyline", () => {
+            it("'from' and 'to' end on the same segment", () => {
+                const entityFactory = new PathEntityFactory(10, 2);
+                entityFactory.pathPool.create(1, true);
+                const p1 = entityFactory.pointPool.create(1, true);
+                p1.point = vec2.fromValues(0.0, 0.0);
+                const p2 = entityFactory.pointPool.create(2, true);
+                p2.point = vec2.fromValues(10.0, 10.0);
+                const p3 = entityFactory.pointPool.create(3, true);
+                p3.point = vec2.fromValues(20.0, 20.0);
 
+                const path = entityFactory.createPathComponent(1, 1, 3, pathType.polyline);
+
+                const out: vec2[] = [];
+                entityFactory.trimPolyline(entityFactory.getPathComponent(1), {from: 0.10, to: 0.30}, out);
+
+                // since from and to ended on the same segment
+                // it should return only one segment (2 points)
+                expect(out.length).to.equal(2);
+
+                expect(out[0][X]).to.not.equal(out[1][X]);
+                expect(out[0][Y]).to.not.equal(out[1][Y]);
+
+                expect(out[0][X]).to.lessThan(p2.point[X]);
+                expect(out[0][Y]).to.lessThan(p2.point[Y]);
+
+                expect(out[1][X]).to.lessThan(p2.point[X]);
+                expect(out[1][Y]).to.lessThan(p2.point[Y]);
+
+                const res0 = isPointOnPolyline(out[0], [p1.point, p2.point]);
+                const res1 = isPointOnPolyline(out[1], [p1.point, p2.point]);
+                expect(res0).to.equal(true);
+                expect(res1).to.equal(true);
+            });
+            it("'from' and 'to' end on different segment", () => {
+                const entityFactory = new PathEntityFactory(10, 2);
+                entityFactory.pathPool.create(1, true);
+                const p1 = entityFactory.pointPool.create(1, true);
+                p1.point = vec2.fromValues(0.0, 0.0);
+                const p2 = entityFactory.pointPool.create(2, true);
+                p2.point = vec2.fromValues(10.0, 10.0);
+                const p3 = entityFactory.pointPool.create(3, true);
+                p3.point = vec2.fromValues(20.0, 20.0);
+                const p4 = entityFactory.pointPool.create(4, true);
+                p3.point = vec2.fromValues(30.0, 30.0);
+
+                const res = entityFactory.createPathComponent(1, 1, 4, pathType.polyline);
+
+                const out: vec2[] = [];
+                entityFactory.trimPolyline(entityFactory.getPathComponent(1), {from: 0.1, to: 0.9}, out);
+
+                expect(out.length).to.equal(4);
+
+                expect(out[0][X]).to.not.equal(p1.point[X]);
+                expect(out[0][Y]).to.not.equal(p1.point[Y]);
+
+                expect(out[1][X]).to.equal(p2.point[X]);
+                expect(out[1][Y]).to.equal(p2.point[Y]);
+
+                expect(out[2][X]).to.equal(p3.point[X]);
+                expect(out[2][Y]).to.equal(p3.point[Y]);
+
+                expect(out[3][X]).to.not.equal(p4.point[X]);
+                expect(out[3][Y]).to.not.equal(p4.point[Y]);
+
+            });
+        });
+    });
 });

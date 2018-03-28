@@ -5,7 +5,7 @@ import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
 import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
-import {X, Y} from "../src/config";
+import { X, Y } from "../src/config";
 import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
@@ -63,7 +63,7 @@ describe("Renderer", () => {
             renderSys.process();
 
             expect(cPool.componentPool.get(cId).style.strokeStyle).to.equal("red");
-            samplePath({from: 0, to: 1}, 5, segmentPts1, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -77,12 +77,12 @@ describe("Renderer", () => {
             renderSys.process();
 
             expect(cPool.componentPool.get(cId).style.strokeStyle).to.equal("red");
-            samplePath({from: 0, to: 1}, 5, segmentPts1, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -98,7 +98,7 @@ describe("Renderer", () => {
 
             renderSys.process();
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -112,12 +112,12 @@ describe("Renderer", () => {
 
             renderSys.process();
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -132,22 +132,22 @@ describe("Renderer", () => {
 
             renderSys.process();
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, segmentPts1, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -173,18 +173,18 @@ describe("Renderer", () => {
             const cp2 = cPool.createFromPaths(2, bufferPathFactory, [1], false);
             renderSys.process();
 
-            samplePath({from: 0, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
-                const data = ctx.getImageData(pt[X] +  tx, pt[Y] + ty , 1, 1);
+            samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                const data = ctx.getImageData(pt[X] + tx, pt[Y] + ty, 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X] + tx, pt[Y] + ty, 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
             // should not be translated
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -205,18 +205,18 @@ describe("Renderer", () => {
 
             renderSys.process();
 
-            samplePath({from: 0, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
                 const data = ctx.getImageData(pt[X] * sx, pt[Y] * sy, 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X] * sx, pt[Y] * sy, 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
 
             // should not be translated
-            samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -237,7 +237,7 @@ describe("Renderer", () => {
 
             const cubicBezier1 = [vec2.fromValues(100, 200), vec2.fromValues(100, 100), vec2.fromValues(250, 100), vec2.fromValues(250, 200)];
 
-            samplePath({from: 0, to: 1}, 5, cubicBezier1, pathType.cubicBezier, (pt) => {
+            samplePath({ from: 0, to: 1 }, 5, cubicBezier1, pathType.cubicBezier, (pt) => {
                 const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                 refImgPixelColorChecking(data, 255, 0, 0, 255);
             });
@@ -273,20 +273,20 @@ describe("Renderer", () => {
 
                     // verify that the first part of the compoundPath is not renderer
                     // since we render part of the second, the first path should not be rendered.
-                    samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
                     // path 2
                     // only the last half should be rendered
-                    samplePath({from: 0, to: 0.45}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 0.45 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
                     // 50 % of the path
-                    samplePath({from: 0.5, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0.5, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
@@ -311,17 +311,17 @@ describe("Renderer", () => {
                     // should be ~ 25%
                     renderSys.process();
 
-                    samplePath({from: 0, to: 0.45}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 0.45 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
-                    samplePath({from: 0.5, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0.5, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
 
-                    samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
@@ -354,25 +354,25 @@ describe("Renderer", () => {
                     renderSys.process();
 
                     // path1
-                    samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
                     // path 2
-                    samplePath({from: 0, to: 0.45}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 0.45 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
                     // path2 at 0.5 should be rendered
-                    samplePath({from: 0.5, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0.5, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
 
                     // path 3 should be fully rendered
-                    samplePath({from: 0, to: 1}, 5, cubicBezierPts3, pathType.cubicBezier, (pt) => {
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts3, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
@@ -380,7 +380,6 @@ describe("Renderer", () => {
             });
             describe("polyline :", () => {
                 it("render starting last half the last path", () => {
-                    console.log("polyline trim not implemented yet");
                     const cId = 1;
 
                     bufferPathFactory.create(1, segmentPts1, pathType.polyline);
@@ -392,148 +391,344 @@ describe("Renderer", () => {
                     const percentOfLastPath = 0.5;
                     const trimPercent = (totalLength - (path2Length * percentOfLastPath)) / totalLength;
                     cp1.trim.to = 1;
+                    // ~75%
                     cp1.trim.from = trimPercent;
 
                     renderSys.process();
 
-                    samplePath({from: 0, to: 1}, 5, segmentPts1, pathType.polyline, (pt) => {
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
-                    samplePath({from: 0, to: 0.5}, 5, segmentPts2, pathType.polyline, (pt) => {
+                    samplePath({ from: 0, to: 0.49 }, 5, segmentPts2, pathType.polyline, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
                     });
 
-                    samplePath({from: 0.5, to: 1}, 5, segmentPts2, pathType.polyline, (pt) => {
+                    samplePath({ from: 0.5, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
                 });
-                it("render from last half of the first path", () => {});
-                it("render from first half of a middle path", () => {});
+                it("render from last half of the first path", () => {
+                    const cId = 1;
+
+                    bufferPathFactory.create(1, segmentPts1, pathType.polyline);
+                    bufferPathFactory.create(2, segmentPts2, pathType.polyline);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2], false);
+                    const totalLength = cp1.length;
+                    const path1Length = bufferPathFactory.getPathComponent(1).length;
+                    const path2Length = bufferPathFactory.getPathComponent(2).length;
+                    const percentOfLastPath = 0.5;
+                    const trimPercent = (path1Length * percentOfLastPath) / totalLength;
+                    cp1.trim.to = 1;
+                    // ~25%
+                    cp1.trim.from = trimPercent;
+
+                    renderSys.process();
+
+                    samplePath({ from: 0, to: 0.49 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
+                    samplePath({ from: 0.5, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+                });
+                it("render from first half of a middle path", () => {
+                    const cId = 1;
+
+                    bufferPathFactory.create(1, segmentPts1, pathType.polyline);
+                    // create a path that link the 2 others paths
+                    const linkPts = [segmentPts1[segmentPts1.length - 1], segmentPts2[0]];
+                    bufferPathFactory.create(2, linkPts, pathType.polyline);
+                    bufferPathFactory.create(3, segmentPts2, pathType.polyline);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3], false);
+                    const totalLength = cp1.length;
+                    const path1Length = bufferPathFactory.getPathComponent(1).length;
+                    const path2Length = bufferPathFactory.getPathComponent(2).length;
+                    const path3Length = bufferPathFactory.getPathComponent(3).length;
+                    const percentOfLastPath = 0.5;
+                    const trimPercent = (path1Length + (path2Length * percentOfLastPath)) / totalLength;
+                    cp1.trim.to = 1;
+                    // 50%
+                    cp1.trim.from = trimPercent;
+
+                    renderSys.process();
+
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+                    let i = 0;
+                    samplePath({ from: 0, to: 0.465 }, 5, linkPts, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                        i++;
+                    });
+
+                    samplePath({ from: 0.5, to: 1 }, 5, linkPts, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+                });
             });
 
         });
         describe("to a position different than 1", () => {
-            it("render until first half of the last path", () => {
-                const cId = 1;
+            describe("cubic bezier", () => {
+                it("render until first half of the last path", () => {
+                    const cId = 1;
 
-                bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
-                bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+                    bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                    bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
 
-                const p1Length = bufferPathFactory.getPathComponent(1).length;
-                const p2Length = bufferPathFactory.getPathComponent(2).length;
-                cp1.trim.from = 0;
-                const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
-                cp1.trim.to = percentTrimTo;
-                cp1.trim.from = 0;
+                    const p1Length = bufferPathFactory.getPathComponent(1).length;
+                    const p2Length = bufferPathFactory.getPathComponent(2).length;
+                    cp1.trim.from = 0;
+                    const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
+                    cp1.trim.to = percentTrimTo;
+                    cp1.trim.from = 0;
 
-                renderSys.process();
+                    renderSys.process();
 
-                let data;
-                // p1 should be fully rendered
-                samplePath({from: 0, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    let data;
+                    // p1 should be fully rendered
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    // p2 should be rendered to half of it length
+                    samplePath({ from: 0, to: 0.5 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0.55, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
                 });
+                it("render until first half of the first path", () => {
+                    const cId = 1;
 
-                // p2 should be rendered to half of it length
-                samplePath({from: 0, to: 0.5}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                    bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+
+                    const p1Length = bufferPathFactory.getPathComponent(1).length;
+                    const p2Length = bufferPathFactory.getPathComponent(2).length;
+                    const percentTrimTo = (p1Length / 2) / cp1.length;
+                    cp1.trim.to = percentTrimTo;
+                    cp1.trim.from = 0;
+
+                    renderSys.process();
+
+                    let data;
+                    // p1 should be rendered only to its half
+                    samplePath({ from: 0, to: 0.5 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0.55, to: 1 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
+                    // path2 should not be rendered
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
                 });
+                it("render until first half of a middle path", () => {
+                    const cId = 1;
 
-                samplePath({from: 0.55, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                    bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+                    const vecDiff = vec2.create();
+                    vec2.sub(vecDiff, cubicBezierPts2[cubicBezierPts2.length - 1], cubicBezierPts1[0]);
+                    const cubicBezierPts3 = cubicBezierPts1.map((v, i) => {
+                        const newV = vec2.create();
+                        return vec2.add(newV, v, vecDiff);
+                    });
+                    bufferPathFactory.create(3, cubicBezierPts3, pathType.cubicBezier);
+
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3]);
+                    const totalLength = cp1.length;
+                    const path1Length = bufferPathFactory.getPathComponent(1).length;
+                    const path2Length = bufferPathFactory.getPathComponent(2).length;
+                    const path3Length = bufferPathFactory.getPathComponent(2).length;
+                    const percentOfSecondPath = 0.5;
+
+                    const trimPercent = (path1Length + (path2Length / 2)) / totalLength;
+                    cp1.trim.from = 0;
+                    cp1.trim.to = trimPercent;
+                    // should be ~ 50%
+                    renderSys.process();
+
+                    // path1
+                    samplePath({ from: 0, to: 0.5 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    // path 2
+                    samplePath({ from: 0, to: 0.5 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    // path2 should be rendered til 0.5
+                    samplePath({ from: 0.55, to: 1 }, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
+                    // path 3 should not be rendered
+                    samplePath({ from: 0, to: 1 }, 5, cubicBezierPts3, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
                 });
-
             });
-            it("render until first half of the first path", () => {
-                const cId = 1;
+            describe("polyline", () => {
+                it("render until first half of the last path", () => {
+                    const cId = 1;
 
-                bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
-                bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+                    bufferPathFactory.create(1, segmentPts1, pathType.polyline);
+                    bufferPathFactory.create(2, segmentPts2, pathType.polyline);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
 
-                const p1Length = bufferPathFactory.getPathComponent(1).length;
-                const p2Length = bufferPathFactory.getPathComponent(2).length;
-                const percentTrimTo = (p1Length / 2) / cp1.length;
-                cp1.trim.to = percentTrimTo;
-                cp1.trim.from = 0;
+                    const p1Length = bufferPathFactory.getPathComponent(1).length;
+                    const p2Length = bufferPathFactory.getPathComponent(2).length;
 
-                renderSys.process();
+                    const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
+                    cp1.trim.to = percentTrimTo;
+                    cp1.trim.from = 0;
 
-                let data;
-                // p1 should be rendered only to its half
-                samplePath({from: 0, to: 0.5}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    renderSys.process();
+
+                    let data;
+                    // p1 should be fully rendered
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    // p2 should be rendered to half of it length
+                    samplePath({ from: 0, to: 0.5 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0.55, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
                 });
+                it("render until first half of the first path", () => {
+                    const cId = 1;
 
-                samplePath({from: 0.55, to: 1}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    bufferPathFactory.create(1, segmentPts1, pathType.polyline);
+                    bufferPathFactory.create(2, segmentPts2, pathType.polyline);
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+
+                    const p1Length = bufferPathFactory.getPathComponent(1).length;
+                    const p2Length = bufferPathFactory.getPathComponent(2).length;
+                    const percentTrimTo = (p1Length / 2) / cp1.length;
+                    cp1.trim.to = percentTrimTo;
+                    cp1.trim.from = 0;
+
+                    renderSys.process();
+
+                    let data;
+                    // p1 should be rendered only to its half
+                    samplePath({ from: 0, to: 0.5 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0.55, to: 1 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
+                    // path2 should not be rendered
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+
                 });
+                it("render until first half of a middle path", () => {
+                    const cId = 1;
 
-                // path2 should not be rendered
-                samplePath({from: 0, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                    data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 0, 0, 0, 0);
-                });
+                    bufferPathFactory.create(1, segmentPts1, pathType.polyline);
+                    bufferPathFactory.create(2, segmentPts2, pathType.polyline);
+                    const vecDiff = vec2.create();
+                    vec2.sub(vecDiff, segmentPts2[segmentPts2.length - 1], segmentPts1[0]);
+                    const segmentPts3 = segmentPts1.map((v, i) => {
+                        const newV = vec2.create();
+                        return vec2.add(newV, v, vecDiff);
+                    });
+                    bufferPathFactory.create(3, segmentPts3, pathType.polyline);
 
-            });
-            it("render until first half of a middle path", () => {
-                const cId = 1;
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3]);
+                    const totalLength = cp1.length;
+                    const path1Length = bufferPathFactory.getPathComponent(1).length;
+                    const path2Length = bufferPathFactory.getPathComponent(2).length;
+                    const path3Length = bufferPathFactory.getPathComponent(3).length;
+                    const percentOfSecondPath = 0.5;
 
-                bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
-                bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
-                const vecDiff = vec2.create();
-                vec2.sub(vecDiff, cubicBezierPts2[cubicBezierPts2.length - 1], cubicBezierPts1[0]);
-                const cubicBezierPts3 = cubicBezierPts1.map((v, i) => {
-                    const newV = vec2.create();
-                    return vec2.add(newV, v, vecDiff);
-                });
-                bufferPathFactory.create(3, cubicBezierPts3, pathType.cubicBezier);
+                    const trimPercent = (path1Length + (path2Length / 2)) / totalLength;
+                    cp1.trim.from = 0;
+                    cp1.trim.to = trimPercent;
+                    // should be ~ 50%
+                    renderSys.process();
 
-                const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2, 3]);
-                const totalLength = cp1.length;
-                const path1Length = bufferPathFactory.getPathComponent(1).length;
-                const path2Length = bufferPathFactory.getPathComponent(2).length;
-                const path3Length = bufferPathFactory.getPathComponent(2).length;
-                const percentOfSecondPath = 0.5;
+                    // path1
+                    samplePath({ from: 0, to: 0.5 }, 5, segmentPts1, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
 
-                const trimPercent = (path1Length + (path2Length / 2)) / totalLength;
-                cp1.trim.from = 0;
-                cp1.trim.to = trimPercent;
-                // should be ~ 50%
-                renderSys.process();
+                    // path 2
+                    samplePath({ from: 0, to: 0.5 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
 
-                // path1
-                samplePath({from: 0, to: 0.5}, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
-                    const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 255, 0, 0, 255);
-                });
+                    // path2 should be rendered til 0.5
+                    samplePath({ from: 0.55, to: 1 }, 5, segmentPts2, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
 
-                // path 2
-                samplePath({from: 0, to: 0.5}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                    const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 255, 0, 0, 255);
-                });
-
-                // path2 should be rendered til 0.5
-                samplePath({from: 0.55, to: 1}, 5, cubicBezierPts2, pathType.cubicBezier, (pt) => {
-                    const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 0, 0, 0, 0);
-                });
-
-                // path 3 should not be rendered
-                samplePath({from: 0, to: 1}, 5, cubicBezierPts3, pathType.cubicBezier, (pt) => {
-                    const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
-                    refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    // path 3 should not be rendered
+                    samplePath({ from: 0, to: 1 }, 5, segmentPts3, pathType.polyline, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
                 });
             });
         });

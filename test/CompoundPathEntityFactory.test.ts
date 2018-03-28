@@ -8,6 +8,7 @@ import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
 import { PointComponent } from "../src/PointComponent";
+import {isPointOnPolyline} from "./CanvasTestHelper";
 
 describe("CompoundPathEntityFactory ", () => {
     let defaultStyle: IPathStyle;
@@ -83,7 +84,6 @@ describe("CompoundPathEntityFactory ", () => {
                 const composition = [pBezier1.entityId, pBezier2.entityId, pPolyLine1.entityId, pPolyLine2.entityId, pBezier2.entityId];
                 const res = compoundEntityFactory.createFromPaths(1, pathEntityFactory, composition, true);
 
-                console.log("refactor length");
                 const expectedLength = pBezier1.length + pBezier2.length + pPolyLine1.length + pPolyLine2.length  + pBezier2.length;
 
                 expect(res.length).to.approximately(expectedLength, 0.1);
@@ -136,18 +136,3 @@ describe("CompoundPathEntityFactory ", () => {
         });
     });
 });
-
-const isPointOnPolyline = (point: vec2, polyLinePts: vec2[]): boolean => {
-    let onTheLine = false;
-    for (let i = 0; i < polyLinePts.length - 1; ++i) {
-        // y - y1 = slope(x - x1)
-        const slope = ( polyLinePts[i + 1][1] - polyLinePts[i][1] ) / ( polyLinePts[i + 1][0] - polyLinePts[i][0] );
-        const x = slope * (point[0] - polyLinePts[i][0]);
-        const y = point[1] - polyLinePts[i][1];
-        if (x === y) {
-            onTheLine = true;
-            break;
-        }
-    }
-    return onTheLine;
-};

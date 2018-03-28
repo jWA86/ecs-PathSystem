@@ -90,7 +90,6 @@ class CompoundPathEntityFactory {
                 const pathStart = accumulatedLength - path.length;
                 // console.log(pathStart + " " + tLength);
                 if (pathStart < tLength) {
-                    console.log(pathStart + " " + tLength);
                     // the point lies on a path
                     // normalized t relative to the pathLenght
                     const normT = Math.abs((tLength - pathStart) / path.length);
