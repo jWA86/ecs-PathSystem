@@ -129,7 +129,6 @@ class CompoundPathRendererSystem extends System {
         if (trim.from !== 0 || trim.to !== 1) {
             const out: vec2[] = [];
             this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
-            // cubicBezierUtil.trim(trim.from, trim.to, pt0, pt1, pt2, pt3, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
         } else {

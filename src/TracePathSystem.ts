@@ -36,7 +36,6 @@ class TracePathSystem extends System {
         this.bufferPath = this.bufferFactory.create(1, [], pathType.polyline);
     }
     public process() {
-        // console.log(inputMouse.position);
         if (this.currentState.currentPtId > 0 && this.currentState.action === "DRAWING") {
             // continue adding point
             if (this.input.pressed) {

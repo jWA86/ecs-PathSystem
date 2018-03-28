@@ -26,7 +26,7 @@ describe("Debug", () => {
     const DEBUG_RED = 0;
     const DEBUG_GREEN = 0;
     const DEBUG_BLUE = 255;
-    const debugColorString = `rgb(${DEBUG_RED}, ${DEBUG_GREEN}, ${DEBUG_BLUE})`;
+    const debugColorString = `rgba(${DEBUG_RED}, ${DEBUG_GREEN}, ${DEBUG_BLUE}, 255)`;
     const debugStyle = { radius: 4, fillStyle: debugColorString, lineWidth: 0.5, strokeStyle: debugColorString };
 
     const segmentPts1 = [vec2.fromValues(0.0, 0.0),
@@ -65,7 +65,6 @@ describe("Debug", () => {
         debugSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
         debugSys.compoundPathEntityPool = cPool;
         const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);
-
         debugSys.process();
 
         let data = ctx.getImageData(segmentPts2[0][0], segmentPts2[0][1], 1, 1);

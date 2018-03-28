@@ -83,12 +83,9 @@ class CompoundPathEntityFactory {
         let accumulatedLength = 0;
         for (let i = fromIndex; i < fromIndex + cPath.nbPath; ++i) {
             const path = this.pathEntityFactory.pathPool.values[i];
-            // console.log(path);
             accumulatedLength += path.length;
-            // console.log(accumulatedLength + " " + tLength);
             if (accumulatedLength >= tLength) {
                 const pathStart = accumulatedLength - path.length;
-                // console.log(pathStart + " " + tLength);
                 if (pathStart < tLength) {
                     // the point lies on a path
                     // normalized t relative to the pathLenght
