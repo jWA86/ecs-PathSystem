@@ -56,9 +56,3 @@ const polyLineInterpolation = (t: number, points: vec2[], pathLength: number) =>
         }
     }
 };
-
-// const lineInterpolation = (t: number, point0: vec2, point1: vec2): vec2  => {
-//     const x = t * (point1[0] - point0[0]) + point0[0];
-//     const y = t * (point1[1] - point0[1]) + point0[1];
-//     return vec2.fromValues(x, y);
-// };
