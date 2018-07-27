@@ -3,3 +3,4 @@ node_modules/
 todo.txt
 .nyc_output/
 coverage
+src/catmull.js

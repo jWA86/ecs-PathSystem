@@ -4,8 +4,8 @@ import { mat4, vec2 } from "gl-matrix";
 import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
-import { BUFFER_NB_POINTS } from "../src/config";
+import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
+import { BUFFER_NB_POINTS, X, Y } from "../src/config";
 import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
@@ -24,6 +24,15 @@ describe("Trace", () => {
     let cPool: CompoundPathEntityFactory;
     let mouseC: MouseComponent;
 
+    const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
+        f: { firstPathId: 0 },
+        l: { length: 0 },
+        n: { nbPath: 0 },
+        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
+        tra: { transform: mat4.create() },
+        tri: { trim: {from: 0, to: 0} },
+    };
+
     const firstPt = vec2.fromValues(10, 20);
     const secondPt = vec2.fromValues(20, 40);
     const thirdPt = vec2.fromValues(40, 60);
@@ -36,13 +45,13 @@ describe("Trace", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(ctx);
+        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
-        renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        renderSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
 
         mouseC = new MouseComponent(1, true, vec2.fromValues(0.0, 0.0), false);
@@ -156,13 +165,15 @@ describe("Trace", () => {
         // should not record the last point since the mouse button is released
         setMouseCoordinates(mouseC, thirdPt, false);
         traceSys.process();
+
         // checking in the destionPool since we earase the buffer at the end of a tracing
-        expect(traceSys.bufferFactory.pathPool.nbCreated).to.equal(1);
+        expect(traceSys.destionationFactory.pathEntityFactory.pathPool.nbCreated).to.equal(1);
         expect(traceSys.destionationFactory.pathEntityFactory.pointPool.nbCreated).to.equal(2);
-        expect(traceSys.bufferFactory.pointPool.values[0].point[0]).to.equal(firstPt[0]);
-        expect(traceSys.bufferFactory.pointPool.values[0].point[1]).to.equal(firstPt[1]);
-        expect(traceSys.bufferFactory.pointPool.values[1].point[0]).to.equal(secondPt[0]);
-        expect(traceSys.bufferFactory.pointPool.values[1].point[1]).to.equal(secondPt[1]);
+
+        expect(traceSys.destionationFactory.pathEntityFactory.pointPool.values[0].point[X]).to.equal(firstPt[X]);
+        expect(traceSys.destionationFactory.pathEntityFactory.pointPool.values[0].point[Y]).to.equal(firstPt[Y]);
+        expect(traceSys.destionationFactory.pathEntityFactory.pointPool.values[1].point[X]).to.equal(secondPt[X]);
+        expect(traceSys.destionationFactory.pathEntityFactory.pointPool.values[1].point[Y]).to.equal(secondPt[Y]);
     });
     it("When the tracing is finished the buffer should be reset", () => {
         const traceSys = new TracePathSystem(mouseC, cPool);

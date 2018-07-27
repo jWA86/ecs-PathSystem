@@ -3,7 +3,7 @@ import { mat4 , vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
 import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
-import { CompoundPathRendererSystem } from "./CompoundPathRenderSystem";
+import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "./CompoundPathRenderSystem";
 import { PathComponent, pathType } from "./PathComponent";
 import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
@@ -12,13 +12,13 @@ export { DebugCompoundPathRendererSystem };
 
 /** Render all controls point of paths from a CompoundPath component */
 class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
-    constructor(context: CanvasRenderingContext2D, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
-        super(context);
+    constructor(params: ICompoundPathRendererParams, context: CanvasRenderingContext2D, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
+        super(params, context);
     }
 
-    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4 }) {
+    public execute(params: ICompoundPathRendererParams) {
         // Iterate paths of the compoundPath Component
-        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
+        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
 
         // a	m11 : glM : m00 [0]
         // b	m12 : glM : m01 [1]
@@ -26,10 +26,10 @@ class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        const t = param4.transform;
+        const t = params.tra.transform;
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
 
-        for (let i = firstPathIndex; i < firstPathIndex + param2.nbPath; ++i) {
+        for (let i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             this.renderPoints(path);
         }

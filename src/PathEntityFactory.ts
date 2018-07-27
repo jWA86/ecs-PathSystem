@@ -17,8 +17,8 @@ class PathEntityFactory {
      * @param pathPool path component pool to be used by the PathEntityFactory for creating path component
      */
     constructor(pointPoolSize: number, pathPoolSize: number, pointPool?: ComponentFactory<PointComponent>, pathPool?: ComponentFactory<PathComponent>) {
-        this.pathPool = pathPool || new ComponentFactory<PathComponent>(pathPoolSize, PathComponent, pathType.polyline, 0, 0, 0);
-        this.pointPool = pointPool || new ComponentFactory<PointComponent>(pointPoolSize, PointComponent, vec2.fromValues(0.0, 0.0));
+        this.pathPool = pathPool || new ComponentFactory<PathComponent>(pathPoolSize, new PathComponent(0, true, pathType.polyline, 0, 0, 0));
+        this.pointPool = pointPool || new ComponentFactory<PointComponent>(pointPoolSize, new PointComponent(0, true, vec2.fromValues(0.0, 0.0)));
     }
     public createPathComponent(entityId: number, firstPointId: number, nbPoints: number, type: pathType, active = true): PathComponent {
         const c = this.pathPool.create(entityId, active);
@@ -69,8 +69,8 @@ class PathEntityFactory {
 
     // should be a method of pool
     public getLastPathId(): number {
-        if (this.pathPool.iterationLength === 0) { return 0; }
-        return this.pathPool.values[this.pathPool.iterationLength - 1].entityId;
+        if (this.pathPool.activeLength === 0) { return 0; }
+        return this.pathPool.values[this.pathPool.activeLength - 1].entityId;
     }
 
     public getFirstPointIndex(path: PathComponent): number {

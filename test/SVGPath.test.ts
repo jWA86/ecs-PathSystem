@@ -33,7 +33,7 @@ describe("SVG path", () => {
 
             // verify that for each cubier bezier curve we have 4 points (first correspond to the last of the previous one)
             let j = 0;
-            for (let i = 0; i < pointPool.iterationLength; ++i) {
+            for (let i = 0; i < pointPool.activeLength; ++i) {
                 if (i % 4 === 0 && i !== 0) {
                     j -= 1;
                 }
@@ -51,7 +51,7 @@ describe("SVG path", () => {
             expect(pointPool.nbCreated).to.equal(nbCurvePath1 * 4);
 
             let j = 0;
-            for (let i = 0; i < pointPool.iterationLength; ++i) {
+            for (let i = 0; i < pointPool.activeLength; ++i) {
                 if (i % 4 === 0 && i !== 0) {
                     j -= 1;
                 }

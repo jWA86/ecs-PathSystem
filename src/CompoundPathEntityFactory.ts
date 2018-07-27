@@ -12,7 +12,7 @@ class CompoundPathEntityFactory {
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
     constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, CompoundPathComponent, true, 0, 0, this.defaultStyle, mat4.create(), { from: 0, to: 1 });
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, new CompoundPathComponent(0, true, true, 0, 0, this.defaultStyle, mat4.create(), { from: 0, to: 1 }, 0));
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
@@ -72,8 +72,8 @@ class CompoundPathEntityFactory {
 
     // should be a method of the pool
     public getLastPathId(): number {
-        if (this.componentPool.iterationLength === 0) { return 0; }
-        return this.componentPool.values[this.componentPool.iterationLength - 1].entityId;
+        if (this.componentPool.activeLength === 0) { return 0; }
+        return this.componentPool.values[this.componentPool.activeLength - 1].entityId;
     }
 
     public getPointAt(t: number, cPath: CompoundPathComponent) {

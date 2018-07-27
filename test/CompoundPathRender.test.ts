@@ -4,7 +4,7 @@ import { mat4, vec2 } from "gl-matrix";
 import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
+import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
 import { X, Y } from "../src/config";
 import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
 import { PathComponent, pathType } from "../src/PathComponent";
@@ -21,6 +21,15 @@ describe("Renderer", () => {
     let bufferPathFactory: PathEntityFactory;
     let renderSys: CompoundPathRendererSystem;
     let cPool: CompoundPathEntityFactory;
+
+    const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
+        f: { firstPathId: 0 },
+        l: { length: 0 },
+        n: { nbPath: 0 },
+        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "square" } },
+        tra: { transform: mat4.create() },
+        tri: { trim: {from: 0, to: 0} },
+    };
 
     // points in absolute / world coordinates
     const segmentPts1 = [vec2.fromValues(0.0, 0.0),
@@ -43,13 +52,13 @@ describe("Renderer", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(ctx);
+        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
-        renderSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        renderSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
     });
 

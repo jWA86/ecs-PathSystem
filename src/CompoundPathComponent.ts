@@ -1,4 +1,4 @@
-import { IComponent } from "ecs-framework";
+import {  interfaces } from "ecs-framework";
 import { mat4 } from "gl-matrix";
 export { CompoundPathComponent, IPathStyle, IRange };
 
@@ -14,6 +14,6 @@ interface IPathStyle {
     lineJoin: CanvasRenderingContext2D["lineJoin"];
 }
 
-class CompoundPathComponent implements IComponent {
+class CompoundPathComponent implements interfaces.IComponent {
     constructor(public entityId: number, public active: boolean, public visible: boolean, public firstPathId: number, public nbPath: number, public style: IPathStyle, public transform: mat4, public trim: IRange, public length: number) {}
 }

@@ -25,11 +25,11 @@ describe("CompoundPathEntityFactory ", () => {
     });
     describe("construction", () => {
         it("should hold a reference to a compound path component pool and a pathComponentFactory", () => {
-            const pathPool = new ComponentFactory<PathComponent>(50, PathComponent, pathType.cubicBezier, 1, 4);
-            const pointPool = new ComponentFactory<PointComponent>(500, PointComponent, vec2.fromValues(0.0, 0.0));
+            const pathPool = new ComponentFactory<PathComponent>(50, new PathComponent(0, true, pathType.cubicBezier, 1, 4, 0));
+            const pointPool = new ComponentFactory<PointComponent>(500, new PointComponent(0, true, vec2.fromValues(0.0, 0.0)));
             const pathEntityFactory = new PathEntityFactory(0, 0, pointPool, pathPool);
 
-            const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, CompoundPathComponent, true, 0, 0);
+            const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 0}, 0));
 
             const compoundEntityFactory = new CompoundPathEntityFactory(0, 0, 0, compoundPathFactory, pathEntityFactory);
             expect(compoundEntityFactory.pathEntityFactory).to.equal(pathEntityFactory);
@@ -62,7 +62,16 @@ describe("CompoundPathEntityFactory ", () => {
             });
             it("return a compound path component", () => {
                 const res = compoundEntityFactory.create(1);
-                expect(res instanceof CompoundPathComponent).to.equal(true);
+                const compareObject = new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 0}, 0);
+                const compountPCKeys = Object.keys(compareObject);
+                const keys = Object.keys(res);
+                expect(keys.length).to.equal(compountPCKeys.length);
+                keys.forEach((k, i) => {
+                    expect(k).to.equal(compountPCKeys[i]);
+                });
+                // // mat4 is serialize as an litteral object, therefore instanceof doesn't work
+                // expect(res instanceof CompoundPathComponent).to.equal(true);
+
             });
             it("create a CompoundPath component from list of path component", () => {
                 const pathEntityFactory = new PathEntityFactory(100, 10);

@@ -4,7 +4,7 @@ import { mat4, vec2 } from "gl-matrix";
 import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
+import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
 import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
 import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
@@ -22,6 +22,15 @@ describe("Debug", () => {
     let bufferPathFactory: PathEntityFactory;
     let renderSys: CompoundPathRendererSystem;
     let cPool: CompoundPathEntityFactory;
+
+    const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
+        f: { firstPathId: 0 },
+        l: { length: 0 },
+        n: { nbPath: 0 },
+        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
+        tra: { transform: mat4.create() },
+        tri: { trim: {from: 0, to: 0} },
+    };
 
     const DEBUG_RED = 0;
     const DEBUG_GREEN = 0;
@@ -49,7 +58,7 @@ describe("Debug", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(ctx);
+        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
@@ -61,8 +70,8 @@ describe("Debug", () => {
 
         bufferPathFactory.create(2, segmentPts2, pathType.polyline);
         bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
-        const debugSys = new DebugCompoundPathRendererSystem(ctx, debugStyle);
-        debugSys.setFactories(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        const debugSys = new DebugCompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx, debugStyle);
+        debugSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
         debugSys.compoundPathEntityPool = cPool;
         const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);
         debugSys.process();

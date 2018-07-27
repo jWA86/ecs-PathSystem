@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
         frameworks: ["mocha", "karma-typescript"],
         files: [
@@ -13,11 +13,18 @@ module.exports = function(config) {
         reporters: ["progress", "karma-typescript", "coverage"],
 
         browsers: ["Chrome", "Firefox", "IE", "PhantomJS", "Safari"],
-        
+
         coverageReporter: {
-            type : 'html',
-            dir : 'coverage/'
-          },
+            type: 'html',
+            dir: 'coverage/'
+        },
+
+        karmaTypescriptConfig: {
+            compilerOptions: {
+                module: "commonjs"
+            },
+            tsconfig: "./tsconfig.json",
+        },
 
         singleRun: false,
         concurrency: Infinity

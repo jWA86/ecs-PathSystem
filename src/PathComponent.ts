@@ -1,4 +1,4 @@
-import { IComponent } from "ecs-framework";
+import { interfaces } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import { cubicBezierUtil } from "./BezierUtil";
 import { L_PRECISION } from "./config";
@@ -9,7 +9,7 @@ enum pathType {
     cubicBezier,
 }
 
-class PathComponent implements IComponent {
+class PathComponent implements interfaces.IComponent {
     constructor(public entityId: number, public active: boolean, public type: pathType, public firstPtId: number, public nbPt: number, public length: number) {
 
     }

@@ -7,16 +7,25 @@ import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
-export { CompoundPathRendererSystem };
+export { CompoundPathRendererSystem, ICompoundPathRendererParams };
+
+interface ICompoundPathRendererParams {
+    f: { firstPathId: number };
+    l: { length: number };
+    n: { nbPath: number };
+    s: { style: IPathStyle };
+    tra: { transform: mat4 };
+    tri: { trim: IRange };
+}
 
 const nbAfterComa = 10000;
-class CompoundPathRendererSystem extends System {
+class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
     public compoundPathEntityPool: CompoundPathEntityFactory;
-    constructor(public context: CanvasRenderingContext2D) { super(); }
+    constructor(params: ICompoundPathRendererParams , public context: CanvasRenderingContext2D) { super(params); }
     // iterate on a compoundPAth component
     // then iterate on all their paths
     // finally iterate on points for rendering
-    public execute(param1: { firstPathId: number }, param2: { nbPath: number }, param3: { style: IPathStyle }, param4: { transform: mat4 }, param5: { trim: IRange }, param6: { length: number }) {
+    public execute(params: ICompoundPathRendererParams) {
 
         this.context.beginPath();
 
@@ -26,20 +35,20 @@ class CompoundPathRendererSystem extends System {
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        const t = param4.transform;
+        const t = params.tra.transform;
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
 
         // Iterate paths of the compoundPath Component
-        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(param1.firstPathId);
+        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
 
         // const previousTrace = { point: undefined, type: pathType.polyline };
         let accumulatedLength = 0;
         let firstPathTraced = false;
         // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
-        const from = param6.length * param5.trim.from;
+        const from = params.l.length * params.tri.trim.from;
         // const to = Math.floor(param6.length * param5.trim.to * nbAfterComa) / nbAfterComa;
-        const to = param6.length * param5.trim.to;
-        for (let i = firstPathIndex; i < firstPathIndex + param2.nbPath; ++i) {
+        const to = params.l.length * params.tri.trim.to;
+        for (let i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
 
             accumulatedLength += path.length;
@@ -72,10 +81,10 @@ class CompoundPathRendererSystem extends System {
             }
         }
 
-        this.context.lineWidth = param3.style.lineWidth;
-        this.context.lineCap = param3.style.lineCap;
-        this.context.strokeStyle = param3.style.strokeStyle;
-        this.context.lineJoin = param3.style.lineJoin;
+        this.context.lineWidth = params.s.style.lineWidth;
+        this.context.lineCap = params.s.style.lineCap;
+        this.context.strokeStyle = params.s.style.strokeStyle;
+        this.context.lineJoin = params.s.style.lineJoin;
         this.context.stroke();
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);

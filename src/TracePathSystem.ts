@@ -1,4 +1,4 @@
-import { ComponentFactory, IComponent, System } from "ecs-framework";
+import { ComponentFactory, interfaces, System } from "ecs-framework";
 import { vec2 } from "gl-matrix";
 // import { distance } from "gl-matrix/src/gl-matrix/vec2";
 import { BUFFER_NB_POINTS, MIN_DIST_BTW_PTS } from "../src/config";
@@ -9,14 +9,14 @@ import { PathEntityFactory } from "./PathEntityFactory";
 import { PointComponent } from "./PointComponent";
 export { MouseComponent, TracePathSystem };
 
-class MouseComponent implements IComponent {
+class MouseComponent implements interfaces.IComponent {
     constructor(public entityId: number, public active: boolean, public position: vec2, public pressed: boolean) { }
 }
 
 // record mouse input as a polyline path in a buffer pool
 // when the mouse is release the polyline is copied to the destination buffer
 // it then can be converted to  a bezier curve
-class TracePathSystem extends System {
+class TracePathSystem extends System<{}> {
     public currentState: { currentPtId: number, action: string };
     public bufferFactory: PathEntityFactory;
     public bufferPath: PathComponent;
@@ -27,8 +27,9 @@ class TracePathSystem extends System {
         this._resizeWhenFreeSlotLeft = val;
     }
     protected _resizeWhenFreeSlotLeft = 20;
+
     constructor(public input: MouseComponent, public destionationFactory: CompoundPathEntityFactory, public minDistanceBtwPts: number = MIN_DIST_BTW_PTS, bufferNbPoints: number = BUFFER_NB_POINTS) {
-        super();
+        super({});
         this.bufferFactory = new PathEntityFactory(BUFFER_NB_POINTS, 2);
         this.currentState = { currentPtId: 0, action: "NAN" };
     }
@@ -51,6 +52,8 @@ class TracePathSystem extends System {
                 this.bufferPath.nbPt += 1;
 
             } else if (!this.input.pressed && this.currentState.action === "DRAWING") {
+                // mouse released, end of recording
+
                 // reset currentState
                 this.currentState.action = "NAN";
                 this.currentState.currentPtId = 0;
@@ -87,7 +90,7 @@ class TracePathSystem extends System {
     public eraseBuffers() {
         // free points
         const buffer = this.bufferFactory.pointPool;
-        const l = buffer.iterationLength;
+        const l = buffer.activeLength;
         for (let i = l; i > -1; --i) {
             const id = buffer.values[i].entityId;
             buffer.free(id);
@@ -99,12 +102,12 @@ class TracePathSystem extends System {
 
 // should be part of a ComponentPool class
 // behavior should be more transparent
-const resizePoolIfNotEnoughtSpace = (pool: ComponentFactory<IComponent>, nbFreeNeeded: number) => {
+const resizePoolIfNotEnoughtSpace = (pool: ComponentFactory<interfaces.IComponent>, nbFreeNeeded: number) => {
     if (pool.nbFreeSlot < nbFreeNeeded) {
         let size = Math.floor(pool.size + (pool.size / 2));
         if (size < nbFreeNeeded) {
             size = nbFreeNeeded * 2;
         }
-        pool.resize(size);
+        pool.resizeTo(size);
     }
 };
