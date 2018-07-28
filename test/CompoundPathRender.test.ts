@@ -26,7 +26,7 @@ describe("Renderer", () => {
         f: { firstPathId: 0 },
         l: { length: 0 },
         n: { nbPath: 0 },
-        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "square" } },
+        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
         tra: { transform: mat4.create() },
         tri: { trim: {from: 0, to: 0} },
     };
