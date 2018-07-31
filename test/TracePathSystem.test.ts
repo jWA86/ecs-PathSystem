@@ -24,15 +24,6 @@ describe("Trace", () => {
     let cPool: CompoundPathEntityFactory;
     let mouseC: MouseComponent;
 
-    const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
-        f: { firstPathId: 0 },
-        l: { length: 0 },
-        n: { nbPath: 0 },
-        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
-        tra: { transform: mat4.create() },
-        tri: { trim: {from: 0, to: 0} },
-    };
-
     const firstPt = vec2.fromValues(10, 20);
     const secondPt = vec2.fromValues(20, 40);
     const thirdPt = vec2.fromValues(40, 60);
@@ -45,13 +36,13 @@ describe("Trace", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
+        renderSys = new CompoundPathRendererSystem(ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
-        renderSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        renderSys.setParamSource("*", cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
 
         mouseC = new MouseComponent(1, true, vec2.fromValues(0.0, 0.0), false);

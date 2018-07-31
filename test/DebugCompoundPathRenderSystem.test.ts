@@ -58,7 +58,7 @@ describe("Debug", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
+        renderSys = new CompoundPathRendererSystem(ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
@@ -71,7 +71,7 @@ describe("Debug", () => {
         bufferPathFactory.create(2, segmentPts2, pathType.polyline);
         bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
         const debugSys = new DebugCompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx, debugStyle);
-        debugSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        debugSys.setParamSource("*", cPool.componentPool);
         debugSys.compoundPathEntityPool = cPool;
         const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);
         debugSys.process();

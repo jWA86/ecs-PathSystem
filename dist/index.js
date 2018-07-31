@@ -498,14 +498,24 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ecs_framework_1 = __webpack_require__(2);
+var gl_matrix_1 = __webpack_require__(0);
 var CONF = __webpack_require__(3);
 var PathComponent_1 = __webpack_require__(1);
+var defaultCompoundPathRendererParams = {
+    f: { firstPathId: 0 },
+    l: { length: 0 },
+    n: { nbPath: 0 },
+    s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
+    tra: { transform: gl_matrix_1.mat4.create() },
+    tri: { trim: { from: 0, to: 0 } },
+};
 var nbAfterComa = 10000;
 var CompoundPathRendererSystem = /** @class */ (function (_super) {
     __extends(CompoundPathRendererSystem, _super);
-    function CompoundPathRendererSystem(params, context) {
-        var _this = _super.call(this, params) || this;
+    function CompoundPathRendererSystem(context) {
+        var _this = _super.call(this) || this;
         _this.context = context;
+        _this._parameters = defaultCompoundPathRendererParams;
         return _this;
     }
     // iterate on a compoundPAth component
@@ -847,7 +857,7 @@ var DebugCompoundPathRendererSystem = /** @class */ (function (_super) {
     __extends(DebugCompoundPathRendererSystem, _super);
     function DebugCompoundPathRendererSystem(params, context, style) {
         if (style === void 0) { style = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }; }
-        var _this = _super.call(this, params, context) || this;
+        var _this = _super.call(this, context) || this;
         _this.style = style;
         return _this;
     }
@@ -1055,11 +1065,12 @@ var TracePathSystem = /** @class */ (function (_super) {
     function TracePathSystem(input, destionationFactory, minDistanceBtwPts, bufferNbPoints) {
         if (minDistanceBtwPts === void 0) { minDistanceBtwPts = config_1.MIN_DIST_BTW_PTS; }
         if (bufferNbPoints === void 0) { bufferNbPoints = config_1.BUFFER_NB_POINTS; }
-        var _this = _super.call(this, {}) || this;
+        var _this = _super.call(this) || this;
         _this.input = input;
         _this.destionationFactory = destionationFactory;
         _this.minDistanceBtwPts = minDistanceBtwPts;
         _this._resizeWhenFreeSlotLeft = 20;
+        _this._parameters = {};
         _this.bufferFactory = new PathEntityFactory_1.PathEntityFactory(config_1.BUFFER_NB_POINTS, 2);
         _this.currentState = { currentPtId: 0, action: "NAN" };
         return _this;

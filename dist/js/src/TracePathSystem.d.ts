@@ -24,6 +24,7 @@ declare class TracePathSystem extends System<{}> {
     bufferPath: PathComponent;
     resizeWhenFreeSlotLeft: number;
     protected _resizeWhenFreeSlotLeft: number;
+    protected _parameters: {};
     constructor(input: MouseComponent, destionationFactory: CompoundPathEntityFactory, minDistanceBtwPts?: number, bufferNbPoints?: number);
     resetBufferPath(): void;
     process(): void;

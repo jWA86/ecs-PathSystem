@@ -27,9 +27,9 @@ class TracePathSystem extends System<{}> {
         this._resizeWhenFreeSlotLeft = val;
     }
     protected _resizeWhenFreeSlotLeft = 20;
-
+    protected _parameters: {} = {};
     constructor(public input: MouseComponent, public destionationFactory: CompoundPathEntityFactory, public minDistanceBtwPts: number = MIN_DIST_BTW_PTS, bufferNbPoints: number = BUFFER_NB_POINTS) {
-        super({});
+        super();
         this.bufferFactory = new PathEntityFactory(BUFFER_NB_POINTS, 2);
         this.currentState = { currentPtId: 0, action: "NAN" };
     }

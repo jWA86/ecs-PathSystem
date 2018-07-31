@@ -22,15 +22,6 @@ describe("Renderer", () => {
     let renderSys: CompoundPathRendererSystem;
     let cPool: CompoundPathEntityFactory;
 
-    const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
-        f: { firstPathId: 0 },
-        l: { length: 0 },
-        n: { nbPath: 0 },
-        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
-        tra: { transform: mat4.create() },
-        tri: { trim: {from: 0, to: 0} },
-    };
-
     // points in absolute / world coordinates
     const segmentPts1 = [vec2.fromValues(0.0, 0.0),
     vec2.fromValues(100.0, 100.0),
@@ -52,13 +43,13 @@ describe("Renderer", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx);
+        renderSys = new CompoundPathRendererSystem(ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
-        renderSys.setParamsSource(cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool, cPool.componentPool);
+        renderSys.setParamSource("*", cPool.componentPool);
         renderSys.compoundPathEntityPool = cPool;
     });
 

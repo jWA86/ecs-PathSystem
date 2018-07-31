@@ -28,7 +28,8 @@ interface ICompoundPathRendererParams {
 declare class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
     context: CanvasRenderingContext2D;
     compoundPathEntityPool: CompoundPathEntityFactory;
-    constructor(params: ICompoundPathRendererParams, context: CanvasRenderingContext2D);
+    protected _parameters: ICompoundPathRendererParams;
+    constructor(context: CanvasRenderingContext2D);
     execute(params: ICompoundPathRendererParams): void;
     normalFrom(accumulatedLength: number, pathLength: number, from: number): number;
     protected trace(path: PathComponent, trim: IRange): void;

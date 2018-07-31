@@ -18,10 +18,20 @@ interface ICompoundPathRendererParams {
     tri: { trim: IRange };
 }
 
+const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
+    f: { firstPathId: 0 },
+    l: { length: 0 },
+    n: { nbPath: 0 },
+    s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
+    tra: { transform: mat4.create() },
+    tri: { trim: {from: 0, to: 0} },
+};
+
 const nbAfterComa = 10000;
 class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
     public compoundPathEntityPool: CompoundPathEntityFactory;
-    constructor(params: ICompoundPathRendererParams , public context: CanvasRenderingContext2D) { super(params); }
+    protected _parameters: ICompoundPathRendererParams = defaultCompoundPathRendererParams;
+    constructor(public context: CanvasRenderingContext2D) { super(); }
     // iterate on a compoundPAth component
     // then iterate on all their paths
     // finally iterate on points for rendering
