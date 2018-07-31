@@ -1,6 +1,6 @@
 {
   "name": "ecs-path",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "system for handling bezier and polygon path",
   "main": "./dist/index.js",
   "scripts": {
