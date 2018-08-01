@@ -1,8 +1,9 @@
 {
   "name": "ecs-path",
-  "version": "0.1.2",
+  "version": "1.0.0-alpha",
   "description": "system for handling bezier and polygon path",
   "main": "./dist/index.js",
+  "types": "./dist/src/entry.d.ts",
   "scripts": {
     "test": "karma start"
   },
