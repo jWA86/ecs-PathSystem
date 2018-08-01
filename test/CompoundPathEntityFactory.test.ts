@@ -32,6 +32,7 @@ describe("CompoundPathEntityFactory ", () => {
             const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 0}, 0));
 
             const compoundEntityFactory = new CompoundPathEntityFactory(0, 0, 0, compoundPathFactory, pathEntityFactory);
+
             expect(compoundEntityFactory.pathEntityFactory).to.equal(pathEntityFactory);
             expect(compoundEntityFactory.componentPool).to.equal(compoundPathFactory);
         });

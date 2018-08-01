@@ -1,6 +1,6 @@
 {
   "name": "ecs-path",
-  "version": "1.0.1-alpha",
+  "version": "1.0.2-alpha",
   "description": "system for handling bezier and polygon path",
   "main": "./dist/index.js",
   "types": "./dist/src/entry.d.ts",
@@ -37,7 +37,7 @@
     "webpack": "^3.11.0"
   },
   "dependencies": {
-    "ecs-framework": "^9.4.7-pre-alpha",
+    "ecs-framework": "^9.5.7-pre-alpha",
     "gl-matrix": "^2.4.0"
   }
 }

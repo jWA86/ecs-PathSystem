@@ -1,10 +1,8 @@
 import { ComponentFactory } from "ecs-framework";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
-import { PathComponent, pathType } from "./PathComponent";
 export { CompoundPathEntityFactory };
 import { mat4, vec2 } from "gl-matrix";
-import { PointComponent } from "./PointComponent";
 
 class CompoundPathEntityFactory {
     public componentPool: ComponentFactory<CompoundPathComponent>;
