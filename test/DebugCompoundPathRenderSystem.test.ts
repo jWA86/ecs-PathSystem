@@ -70,7 +70,7 @@ describe("Debug", () => {
 
         bufferPathFactory.create(2, segmentPts2, pathType.polyline);
         bufferPathFactory.create(3, cubicBezierPts2, pathType.cubicBezier);
-        const debugSys = new DebugCompoundPathRendererSystem(defaultCompoundPathRendererParams, ctx, debugStyle);
+        const debugSys = new DebugCompoundPathRendererSystem(ctx, debugStyle);
         debugSys.setParamSource("*", cPool.componentPool);
         debugSys.compoundPathEntityPool = cPool;
         const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [2, 3]);

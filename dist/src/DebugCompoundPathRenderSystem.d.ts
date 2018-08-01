@@ -11,7 +11,7 @@ declare class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem
         lineWidth: number;
         strokeStyle: string | CanvasGradient | CanvasPattern;
     };
-    constructor(params: ICompoundPathRendererParams, context: CanvasRenderingContext2D, style?: {
+    constructor(context: CanvasRenderingContext2D, style?: {
         radius: number;
         fillStyle: string | CanvasGradient | CanvasPattern;
         lineWidth: number;

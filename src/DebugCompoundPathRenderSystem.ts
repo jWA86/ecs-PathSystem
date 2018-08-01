@@ -12,7 +12,7 @@ export { DebugCompoundPathRendererSystem };
 
 /** Render all controls point of paths from a CompoundPath component */
 class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
-    constructor(params: ICompoundPathRendererParams, context: CanvasRenderingContext2D, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
+    constructor(context: CanvasRenderingContext2D, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
         super(context);
     }
 

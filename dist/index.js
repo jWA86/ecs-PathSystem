@@ -855,7 +855,7 @@ var CompoundPathRenderSystem_1 = __webpack_require__(8);
 /** Render all controls point of paths from a CompoundPath component */
 var DebugCompoundPathRendererSystem = /** @class */ (function (_super) {
     __extends(DebugCompoundPathRendererSystem, _super);
-    function DebugCompoundPathRendererSystem(params, context, style) {
+    function DebugCompoundPathRendererSystem(context, style) {
         if (style === void 0) { style = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }; }
         var _this = _super.call(this, context) || this;
         _this.style = style;
