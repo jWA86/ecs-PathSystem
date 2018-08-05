@@ -315,21 +315,25 @@ var PathEntityFactory = /** @class */ (function () {
             }
             return PathComponent_1.getPointAt(t, points, path.type, path.length);
         };
-        this.trimPath = function (path, trim, out) {
+        this.trimPath = function (path, trimFrom, trimTo, out) {
+            if (trimFrom === void 0) { trimFrom = 0; }
+            if (trimTo === void 0) { trimTo = 0; }
             var firstPtIndex = _this.getFirstPointIndex(path);
             var pool = _this.pointPool.values;
             switch (path.type) {
                 case PathComponent_1.pathType.cubicBezier:
-                    BezierUtil_1.cubicBezierUtil.trim(trim.from, trim.to, pool[firstPtIndex].point, pool[firstPtIndex + 1].point, pool[firstPtIndex + 2].point, pool[firstPtIndex + 3].point, out);
+                    BezierUtil_1.cubicBezierUtil.trim(trimFrom, trimTo, pool[firstPtIndex].point, pool[firstPtIndex + 1].point, pool[firstPtIndex + 2].point, pool[firstPtIndex + 3].point, out);
                     break;
                 case PathComponent_1.pathType.polyline:
-                    _this.trimPolyline(path, trim, out);
+                    _this.trimPolyline(path, trimFrom, trimTo, out);
                     break;
                 default:
                     break;
             }
         };
-        this.trimPolyline = function (path, trim, out) {
+        this.trimPolyline = function (path, trimFrom, trimTo, out) {
+            if (trimFrom === void 0) { trimFrom = 0; }
+            if (trimTo === void 0) { trimTo = 0; }
             var firstPtIndex = _this.getFirstPointIndex(path);
             var pool = _this.pointPool.values;
             var accumulatedDist = 0;
@@ -339,21 +343,21 @@ var PathEntityFactory = /** @class */ (function () {
                 accumulatedDist += dist;
                 var normCurrentPos = (accumulatedDist / path.length);
                 // first point lerp
-                if (out.length === 0 && (trim.from <= normCurrentPos)) {
+                if (out.length === 0 && (trimFrom <= normCurrentPos)) {
                     var pt0 = gl_matrix_1.vec2.create();
-                    var segNormT = _this.normTRelativeToSegment(dist, path.length, trim.from, normCurrentPos);
+                    var segNormT = _this.normTRelativeToSegment(dist, path.length, trimFrom, normCurrentPos);
                     gl_matrix_1.vec2.lerp(pt0, pool[i - 1].point, pool[i].point, segNormT);
                     out.push(pt0);
                 }
-                if (trim.to <= normCurrentPos) {
+                if (trimTo <= normCurrentPos) {
                     // last point lerp
                     var pt = gl_matrix_1.vec2.create();
-                    var segNormT = _this.normTRelativeToSegment(dist, path.length, trim.to, normCurrentPos);
+                    var segNormT = _this.normTRelativeToSegment(dist, path.length, trimTo, normCurrentPos);
                     gl_matrix_1.vec2.lerp(pt, pool[i - 1].point, pool[i].point, segNormT);
                     out.push(pt);
                     return;
                 }
-                if (out.length > 0 && trim.to > normCurrentPos) {
+                if (out.length > 0 && trimTo > normCurrentPos) {
                     // intermediate point
                     out.push(pool[i].point);
                 }
@@ -446,7 +450,7 @@ exports.PathEntityFactory = PathEntityFactory;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var CompoundPathComponent = /** @class */ (function () {
-    function CompoundPathComponent(entityId, active, visible, firstPathId, nbPath, style, transform, trim, length) {
+    function CompoundPathComponent(entityId, active, visible, firstPathId, nbPath, style, transform, trimFrom, trimTo, length) {
         this.entityId = entityId;
         this.active = active;
         this.visible = visible;
@@ -454,7 +458,8 @@ var CompoundPathComponent = /** @class */ (function () {
         this.nbPath = nbPath;
         this.style = style;
         this.transform = transform;
-        this.trim = trim;
+        this.trimFrom = trimFrom;
+        this.trimTo = trimTo;
         this.length = length;
     }
     return CompoundPathComponent;
@@ -502,12 +507,13 @@ var gl_matrix_1 = __webpack_require__(0);
 var CONF = __webpack_require__(3);
 var PathComponent_1 = __webpack_require__(1);
 var defaultCompoundPathRendererParams = {
-    f: { firstPathId: 0 },
-    l: { length: 0 },
-    n: { nbPath: 0 },
-    s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
-    tra: { transform: gl_matrix_1.mat4.create() },
-    tri: { trim: { from: 0, to: 0 } },
+    firstPathId: 0,
+    length: 0,
+    nbPath: 0,
+    style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" },
+    transform: gl_matrix_1.mat4.create(),
+    trimFrom: 0,
+    trimTo: 0,
 };
 var nbAfterComa = 10000;
 var CompoundPathRendererSystem = /** @class */ (function (_super) {
@@ -515,7 +521,7 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
     function CompoundPathRendererSystem(context) {
         var _this = _super.call(this) || this;
         _this.context = context;
-        _this._parameters = defaultCompoundPathRendererParams;
+        _this._defaultParameter = defaultCompoundPathRendererParams;
         return _this;
     }
     // iterate on a compoundPAth component
@@ -529,18 +535,18 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        var t = params.tra.transform;
+        var t = params.transform[this._k.transform];
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
         // Iterate paths of the compoundPath Component
-        var firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
+        var firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
         // const previousTrace = { point: undefined, type: pathType.polyline };
         var accumulatedLength = 0;
         var firstPathTraced = false;
         // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
-        var from = params.l.length * params.tri.trim.from;
+        var from = params.length[this._k.length] * params.trimFrom[this._k.trimFrom];
         // const to = Math.floor(param6.length * param5.trim.to * nbAfterComa) / nbAfterComa;
-        var to = params.l.length * params.tri.trim.to;
-        for (var i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
+        var to = params.length[this._k.length] * params.trimTo[this._k.trimTo];
+        for (var i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             var path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             accumulatedLength += path.length;
             if (accumulatedLength < from) {
@@ -551,7 +557,7 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
                 // When trim begin on this path but end on a next path. or end on this path because it's the last one
                 var normFrom = this.normalFrom(accumulatedLength, path.length, from);
                 var normTo = 1;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo);
                 firstPathTraced = true;
             }
             else if (accumulatedLength >= to && !firstPathTraced) {
@@ -559,7 +565,7 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
                 // from from the begining of this path in normalized form
                 var normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 var normTo = (path.length - to) / path.length;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo);
                 firstPathTraced = true;
                 break;
             }
@@ -567,14 +573,14 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
                 // When trim begin on a previous path and end on this one
                 var normFrom = 0;
                 var normTo = 1 - (accumulatedLength - to) / path.length;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo);
                 break;
             }
         }
-        this.context.lineWidth = params.s.style.lineWidth;
-        this.context.lineCap = params.s.style.lineCap;
-        this.context.strokeStyle = params.s.style.strokeStyle;
-        this.context.lineJoin = params.s.style.lineJoin;
+        this.context.lineWidth = params.style[this._k.style].lineWidth;
+        this.context.lineCap = params.style[this._k.style].lineCap;
+        this.context.strokeStyle = params.style[this._k.style].strokeStyle;
+        this.context.lineJoin = params.style[this._k.style].lineJoin;
         this.context.stroke();
         this.context.setTransform(1, 0, 0, 1, 0, 0);
     };
@@ -586,13 +592,13 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
         var l = (pathLength - (accumulatedLength - from)) / pathLength;
         return (l < 0) ? 0 : l;
     };
-    CompoundPathRendererSystem.prototype.trace = function (path, trim) {
+    CompoundPathRendererSystem.prototype.trace = function (path, trimFrom, trimTo) {
         switch (path.type) {
             case PathComponent_1.pathType.polyline:
-                this.tracePolyLine(path, trim);
+                this.tracePolyLine(path, trimFrom, trimTo);
                 break;
             case PathComponent_1.pathType.cubicBezier:
-                this.traceCubicBezier(path, trim);
+                this.traceCubicBezier(path, trimFrom, trimTo);
                 break;
             default:
                 break;
@@ -601,9 +607,10 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
     /**
      * lineTo points of pathComponent
      */
-    CompoundPathRendererSystem.prototype.tracePolyLine = function (path, trim) {
-        if (trim === void 0) { trim = { from: 0, to: 1 }; }
-        if (trim.from === 0 && trim.to === 1) {
+    CompoundPathRendererSystem.prototype.tracePolyLine = function (path, trimFrom, trimTo) {
+        if (trimFrom === void 0) { trimFrom = 0; }
+        if (trimTo === void 0) { trimTo = 1; }
+        if (trimFrom === 0 && trimTo === 1) {
             var firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
             var pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
             var pt = pool[firstPtIndex].point;
@@ -615,19 +622,20 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
         }
         else {
             var out = [];
-            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trimFrom, trimTo, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             for (var j = 1; j < out.length; ++j) {
                 this.context.lineTo(out[j][CONF.X], out[j][CONF.Y]);
             }
         }
     };
-    CompoundPathRendererSystem.prototype.traceCubicBezier = function (path, trim) {
-        if (trim === void 0) { trim = { from: 0, to: 1 }; }
+    CompoundPathRendererSystem.prototype.traceCubicBezier = function (path, trimFrom, trimTo) {
+        if (trimFrom === void 0) { trimFrom = 0; }
+        if (trimTo === void 0) { trimTo = 1; }
         // trim
-        if (trim.from !== 0 || trim.to !== 1) {
+        if (trimFrom !== 0 || trimTo !== 1) {
             var out = [];
-            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trimFrom, trimTo, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
         }
@@ -706,7 +714,7 @@ var CompoundPathEntityFactory = /** @class */ (function () {
     function CompoundPathEntityFactory(compoundPathPoolSize, pathPoolSize, pointPoolSize, componentPool, pathEntityFactory, defaultStyle) {
         this.defaultStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ecs_framework_1.ComponentFactory(compoundPathPoolSize, new CompoundPathComponent_1.CompoundPathComponent(0, true, true, 0, 0, this.defaultStyle, gl_matrix_1.mat4.create(), { from: 0, to: 1 }, 0));
+        this.componentPool = componentPool || new ecs_framework_1.ComponentFactory(compoundPathPoolSize, new CompoundPathComponent_1.CompoundPathComponent(0, true, true, 0, 0, this.defaultStyle, gl_matrix_1.mat4.create(), 0, 1, 0));
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory_1.PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**
@@ -863,16 +871,16 @@ var DebugCompoundPathRendererSystem = /** @class */ (function (_super) {
     }
     DebugCompoundPathRendererSystem.prototype.execute = function (params) {
         // Iterate paths of the compoundPath Component
-        var firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
+        var firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
         // a	m11 : glM : m00 [0]
         // b	m12 : glM : m01 [1]
         // c	m21 : glM : m10 [4]
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        var t = params.tra.transform;
+        var t = params.transform[this._k.transform];
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
-        for (var i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
+        for (var i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             var path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             this.renderPoints(path);
         }
@@ -1069,6 +1077,7 @@ var TracePathSystem = /** @class */ (function (_super) {
         _this.input = input;
         _this.destionationFactory = destionationFactory;
         _this.minDistanceBtwPts = minDistanceBtwPts;
+        _this._defaultParameter = {};
         _this._resizeWhenFreeSlotLeft = 20;
         _this._parameters = {};
         _this.bufferFactory = new PathEntityFactory_1.PathEntityFactory(config_1.BUFFER_NB_POINTS, 2);

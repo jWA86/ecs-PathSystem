@@ -29,7 +29,7 @@ describe("CompoundPathEntityFactory ", () => {
             const pointPool = new ComponentFactory<PointComponent>(500, new PointComponent(0, true, vec2.fromValues(0.0, 0.0)));
             const pathEntityFactory = new PathEntityFactory(0, 0, pointPool, pathPool);
 
-            const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 0}, 0));
+            const compoundPathFactory = new ComponentFactory<CompoundPathComponent>(10, new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), 0, 0, 0));
 
             const compoundEntityFactory = new CompoundPathEntityFactory(0, 0, 0, compoundPathFactory, pathEntityFactory);
 
@@ -63,7 +63,7 @@ describe("CompoundPathEntityFactory ", () => {
             });
             it("return a compound path component", () => {
                 const res = compoundEntityFactory.create(1);
-                const compareObject = new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 0}, 0);
+                const compareObject = new CompoundPathComponent(0, true, true, 0, 0, defaultStyle, mat4.create(), 0, 0, 0);
                 const compountPCKeys = Object.keys(compareObject);
                 const keys = Object.keys(res);
                 expect(keys.length).to.equal(compountPCKeys.length);

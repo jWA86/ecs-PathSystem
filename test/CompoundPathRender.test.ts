@@ -266,8 +266,8 @@ describe("Renderer", () => {
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentOfLastPath = 0.5;
                     const trimPercent = (totalLength - (path2Length * percentOfLastPath)) / totalLength;
-                    cp1.trim.to = 1;
-                    cp1.trim.from = trimPercent;
+                    cp1.trimTo = 1;
+                    cp1.trimFrom = trimPercent;
 
                     renderSys.process();
 
@@ -306,8 +306,8 @@ describe("Renderer", () => {
                     const percentOfFirstPath = 0.5;
 
                     const trimPercent = (totalLength - ((path1Length * percentOfFirstPath) + path2Length)) / totalLength;
-                    cp1.trim.to = 1;
-                    cp1.trim.from = trimPercent;
+                    cp1.trimTo = 1;
+                    cp1.trimFrom = trimPercent;
                     // should be ~ 25%
                     renderSys.process();
 
@@ -348,8 +348,8 @@ describe("Renderer", () => {
                     const percentOfSecondPath = 0.5;
 
                     const trimPercent = (totalLength - ((path2Length * percentOfSecondPath) + path3Length)) / totalLength;
-                    cp1.trim.from = trimPercent;
-                    cp1.trim.to = 1;
+                    cp1.trimFrom = trimPercent;
+                    cp1.trimTo = 1;
                     // should be ~ 50%
                     renderSys.process();
 
@@ -390,9 +390,9 @@ describe("Renderer", () => {
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentOfLastPath = 0.5;
                     const trimPercent = (totalLength - (path2Length * percentOfLastPath)) / totalLength;
-                    cp1.trim.to = 1;
+                    cp1.trimTo = 1;
                     // ~75%
-                    cp1.trim.from = trimPercent;
+                    cp1.trimFrom = trimPercent;
 
                     renderSys.process();
 
@@ -422,9 +422,9 @@ describe("Renderer", () => {
                     const path2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentOfLastPath = 0.5;
                     const trimPercent = (path1Length * percentOfLastPath) / totalLength;
-                    cp1.trim.to = 1;
+                    cp1.trimTo = 1;
                     // ~25%
-                    cp1.trim.from = trimPercent;
+                    cp1.trimFrom = trimPercent;
 
                     renderSys.process();
 
@@ -458,9 +458,9 @@ describe("Renderer", () => {
                     const path3Length = bufferPathFactory.getPathComponent(3).length;
                     const percentOfLastPath = 0.5;
                     const trimPercent = (path1Length + (path2Length * percentOfLastPath)) / totalLength;
-                    cp1.trim.to = 1;
+                    cp1.trimTo = 1;
                     // 50%
-                    cp1.trim.from = trimPercent;
+                    cp1.trimFrom = trimPercent;
 
                     renderSys.process();
 
@@ -499,10 +499,10 @@ describe("Renderer", () => {
 
                     const p1Length = bufferPathFactory.getPathComponent(1).length;
                     const p2Length = bufferPathFactory.getPathComponent(2).length;
-                    cp1.trim.from = 0;
+                    cp1.trimFrom = 0;
                     const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
-                    cp1.trim.to = percentTrimTo;
-                    cp1.trim.from = 0;
+                    cp1.trimTo = percentTrimTo;
+                    cp1.trimFrom = 0;
 
                     renderSys.process();
 
@@ -535,8 +535,8 @@ describe("Renderer", () => {
                     const p1Length = bufferPathFactory.getPathComponent(1).length;
                     const p2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentTrimTo = (p1Length / 2) / cp1.length;
-                    cp1.trim.to = percentTrimTo;
-                    cp1.trim.from = 0;
+                    cp1.trimTo = percentTrimTo;
+                    cp1.trimFrom = 0;
 
                     renderSys.process();
 
@@ -580,8 +580,8 @@ describe("Renderer", () => {
                     const percentOfSecondPath = 0.5;
 
                     const trimPercent = (path1Length + (path2Length / 2)) / totalLength;
-                    cp1.trim.from = 0;
-                    cp1.trim.to = trimPercent;
+                    cp1.trimFrom = 0;
+                    cp1.trimTo = trimPercent;
                     // should be ~ 50%
                     renderSys.process();
 
@@ -622,8 +622,8 @@ describe("Renderer", () => {
                     const p2Length = bufferPathFactory.getPathComponent(2).length;
 
                     const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
-                    cp1.trim.to = percentTrimTo;
-                    cp1.trim.from = 0;
+                    cp1.trimTo = percentTrimTo;
+                    cp1.trimFrom = 0;
 
                     renderSys.process();
 
@@ -656,8 +656,8 @@ describe("Renderer", () => {
                     const p1Length = bufferPathFactory.getPathComponent(1).length;
                     const p2Length = bufferPathFactory.getPathComponent(2).length;
                     const percentTrimTo = (p1Length / 2) / cp1.length;
-                    cp1.trim.to = percentTrimTo;
-                    cp1.trim.from = 0;
+                    cp1.trimTo = percentTrimTo;
+                    cp1.trimFrom = 0;
 
                     renderSys.process();
 
@@ -701,8 +701,8 @@ describe("Renderer", () => {
                     const percentOfSecondPath = 0.5;
 
                     const trimPercent = (path1Length + (path2Length / 2)) / totalLength;
-                    cp1.trim.from = 0;
-                    cp1.trim.to = trimPercent;
+                    cp1.trimFrom = 0;
+                    cp1.trimTo = trimPercent;
                     // should be ~ 50%
                     renderSys.process();
 

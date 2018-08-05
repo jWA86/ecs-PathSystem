@@ -1,7 +1,6 @@
 /// <reference types="gl-matrix" />
 import { ComponentFactory } from "ecs-framework";
 import { vec2 } from "gl-matrix";
-import { IRange } from "./CompoundPathComponent";
 import { PathComponent, pathType } from "./PathComponent";
 import { PointComponent } from "./PointComponent";
 export { PathEntityFactory };
@@ -35,7 +34,7 @@ declare class PathEntityFactory {
      */
     getLastPointIndex(path: PathComponent): number;
     getPointAt: (t: number, path: PathComponent) => vec2;
-    trimPath: (path: PathComponent, trim: IRange, out: vec2[]) => void;
-    trimPolyline: (path: PathComponent, trim: IRange, out: vec2[]) => void;
+    trimPath: (path: PathComponent, trimFrom: number, trimTo: number, out: vec2[]) => void;
+    trimPolyline: (path: PathComponent, trimFrom: number, trimTo: number, out: vec2[]) => void;
     protected normTRelativeToSegment(segmentLenght: number, pathLength: number, normAbsPosition: number, normAbsEndSegment: number): number;
 }

@@ -1,7 +1,7 @@
-import { vec2, vec3 } from "gl-matrix";
-import { CompoundPathComponent, IPathStyle } from "./CompoundPathComponent";
+import { vec2 } from "gl-matrix";
+import { CompoundPathComponent } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
-import { PathComponent, pathType } from "./PathComponent";
+import { pathType } from "./PathComponent";
 export { svgPathUtil };
 
 const svgPathUtil = {

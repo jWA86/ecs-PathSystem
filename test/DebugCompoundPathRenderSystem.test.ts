@@ -1,14 +1,10 @@
-import { expect } from "chai";
-import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
-import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
 import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
 import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
-import { PathComponent, pathType } from "../src/PathComponent";
+import { pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
-import { PointComponent } from "../src/PointComponent";
 import { refImgPixelColorChecking } from "./CanvasTestHelper";
 
 describe("Debug", () => {
@@ -24,12 +20,13 @@ describe("Debug", () => {
     let cPool: CompoundPathEntityFactory;
 
     const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
-        f: { firstPathId: 0 },
-        l: { length: 0 },
-        n: { nbPath: 0 },
-        s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
-        tra: { transform: mat4.create() },
-        tri: { trim: {from: 0, to: 0} },
+        firstPathId: 0,
+        length: 0,
+        nbPath: 0,
+        style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" },
+        transform: mat4.create(),
+        trimFrom: 0,
+        trimTo: 0,
     };
 
     const DEBUG_RED = 0;

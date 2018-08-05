@@ -10,7 +10,7 @@ class CompoundPathEntityFactory {
     public defaultStyle: IPathStyle = { lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter" };
     constructor(compoundPathPoolSize: number, pathPoolSize: number, pointPoolSize: number, componentPool?: ComponentFactory<CompoundPathComponent>, pathEntityFactory?: PathEntityFactory, defaultStyle?: IPathStyle) {
         this.defaultStyle = defaultStyle || this.defaultStyle;
-        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, new CompoundPathComponent(0, true, true, 0, 0, this.defaultStyle, mat4.create(), { from: 0, to: 1 }, 0));
+        this.componentPool = componentPool || new ComponentFactory<CompoundPathComponent>(compoundPathPoolSize, new CompoundPathComponent(0, true, true, 0, 0, this.defaultStyle, mat4.create(), 0, 1, 0));
         this.pathEntityFactory = pathEntityFactory || new PathEntityFactory(pointPoolSize, pathPoolSize);
     }
     /**

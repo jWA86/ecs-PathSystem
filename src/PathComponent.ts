@@ -1,5 +1,5 @@
 import { interfaces } from "ecs-framework";
-import { mat4, vec2 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import { cubicBezierUtil } from "./BezierUtil";
 import { L_PRECISION } from "./config";
 export { computeLength, getPointAt, PathComponent, pathType };

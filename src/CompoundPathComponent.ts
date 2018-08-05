@@ -1,11 +1,6 @@
 import {  interfaces } from "ecs-framework";
 import { mat4 } from "gl-matrix";
-export { CompoundPathComponent, IPathStyle, IRange };
-
-interface IRange {
-    from: number;
-    to: number;
-}
+export { CompoundPathComponent, IPathStyle};
 
 interface IPathStyle {
     lineWidth: number;
@@ -15,5 +10,5 @@ interface IPathStyle {
 }
 
 class CompoundPathComponent implements interfaces.IComponent {
-    constructor(public entityId: number, public active: boolean, public visible: boolean, public firstPathId: number, public nbPath: number, public style: IPathStyle, public transform: mat4, public trim: IRange, public length: number) {}
+    constructor(public entityId: number, public active: boolean, public visible: boolean, public firstPathId: number, public nbPath: number, public style: IPathStyle, public transform: mat4, public trimFrom: number, public trimTo: number, public length: number) {}
 }

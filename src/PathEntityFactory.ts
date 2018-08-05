@@ -1,7 +1,6 @@
 import { ComponentFactory } from "ecs-framework";
 import { vec2 } from "gl-matrix";
 import { cubicBezierUtil } from "./BezierUtil";
-import { IRange } from "./CompoundPathComponent";
 import { computeLength, getPointAt, PathComponent, pathType } from "./PathComponent";
 import { PointComponent } from "./PointComponent";
 
@@ -98,23 +97,23 @@ class PathEntityFactory {
         return getPointAt(t, points, path.type, path.length);
     }
 
-    public trimPath = (path: PathComponent, trim: IRange, out: vec2[] ) => {
+    public trimPath = (path: PathComponent, trimFrom: number = 0, trimTo: number = 0, out: vec2[] ) => {
         const firstPtIndex = this.getFirstPointIndex(path);
 
         const pool = this.pointPool.values;
         switch (path.type) {
             case pathType.cubicBezier:
-                cubicBezierUtil.trim(trim.from, trim.to, pool[firstPtIndex].point, pool[firstPtIndex + 1].point, pool[firstPtIndex + 2].point, pool[firstPtIndex + 3].point, out);
+                cubicBezierUtil.trim(trimFrom, trimTo, pool[firstPtIndex].point, pool[firstPtIndex + 1].point, pool[firstPtIndex + 2].point, pool[firstPtIndex + 3].point, out);
                 break;
             case pathType.polyline:
-                this.trimPolyline(path, trim, out);
+                this.trimPolyline(path, trimFrom, trimTo, out);
                 break;
             default:
                 break;
         }
     }
 
-    public trimPolyline = (path: PathComponent, trim: IRange, out: vec2[]) => {
+    public trimPolyline = (path: PathComponent, trimFrom: number = 0, trimTo: number = 0, out: vec2[]) => {
         const firstPtIndex = this.getFirstPointIndex(path);
         const pool = this.pointPool.values;
         let accumulatedDist = 0;
@@ -124,21 +123,21 @@ class PathEntityFactory {
             accumulatedDist += dist;
             const normCurrentPos = (accumulatedDist / path.length);
             // first point lerp
-            if (out.length === 0 && (trim.from <= normCurrentPos)) {
+            if (out.length === 0 && (trimFrom <= normCurrentPos)) {
                 const pt0 = vec2.create();
-                const segNormT = this.normTRelativeToSegment(dist, path.length, trim.from, normCurrentPos);
+                const segNormT = this.normTRelativeToSegment(dist, path.length, trimFrom, normCurrentPos);
                 vec2.lerp(pt0, pool[i - 1 ].point, pool[i].point, segNormT);
                 out.push(pt0);
             }
-            if (trim.to <= normCurrentPos) {
+            if (trimTo <= normCurrentPos) {
                 // last point lerp
                 const pt = vec2.create();
-                const segNormT = this.normTRelativeToSegment(dist, path.length, trim.to, normCurrentPos);
+                const segNormT = this.normTRelativeToSegment(dist, path.length, trimTo, normCurrentPos);
                 vec2.lerp(pt, pool[i - 1 ].point, pool[i].point, segNormT);
                 out.push(pt);
                 return;
             }
-            if (out.length > 0 && trim.to > normCurrentPos) {
+            if (out.length > 0 && trimTo > normCurrentPos) {
                 // intermediate point
                 out.push(pool[i].point);
             }

@@ -1,15 +1,10 @@
 import { expect } from "chai";
-import { ComponentFactory } from "ecs-framework";
-import { mat4, vec2 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import "mocha";
-import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
+import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
 import { BUFFER_NB_POINTS, X, Y } from "../src/config";
-import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
-import { PathComponent, pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
-import { PointComponent } from "../src/PointComponent";
 import { MouseComponent, TracePathSystem } from "../src/TracePathSystem";
 
 describe("Trace", () => {

@@ -22,6 +22,7 @@ declare class TracePathSystem extends System<{}> {
     };
     bufferFactory: PathEntityFactory;
     bufferPath: PathComponent;
+    protected _defaultParameter: {};
     resizeWhenFreeSlotLeft: number;
     protected _resizeWhenFreeSlotLeft: number;
     protected _parameters: {};

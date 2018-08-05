@@ -2,11 +2,9 @@ import { ComponentFactory, interfaces, System } from "ecs-framework";
 import { vec2 } from "gl-matrix";
 // import { distance } from "gl-matrix/src/gl-matrix/vec2";
 import { BUFFER_NB_POINTS, MIN_DIST_BTW_PTS } from "../src/config";
-import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
 import { PathEntityFactory } from "./PathEntityFactory";
-import { PointComponent } from "./PointComponent";
 export { MouseComponent, TracePathSystem };
 
 class MouseComponent implements interfaces.IComponent {
@@ -20,6 +18,7 @@ class TracePathSystem extends System<{}> {
     public currentState: { currentPtId: number, action: string };
     public bufferFactory: PathEntityFactory;
     public bufferPath: PathComponent;
+    protected _defaultParameter = {};
     public get resizeWhenFreeSlotLeft() {
         return this._resizeWhenFreeSlotLeft;
     }

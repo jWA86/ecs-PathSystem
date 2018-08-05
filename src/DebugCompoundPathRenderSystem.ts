@@ -1,12 +1,7 @@
-import { ComponentFactory, System } from "ecs-framework";
 import { mat4 , vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
-import { IPathStyle } from "./CompoundPathComponent";
-import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "./CompoundPathRenderSystem";
-import { PathComponent, pathType } from "./PathComponent";
-import { PathEntityFactory } from "./PathEntityFactory";
-import { PointComponent } from "./PointComponent";
+import { PathComponent} from "./PathComponent";
 
 export { DebugCompoundPathRendererSystem };
 
@@ -18,7 +13,7 @@ class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
 
     public execute(params: ICompoundPathRendererParams) {
         // Iterate paths of the compoundPath Component
-        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
+        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
 
         // a	m11 : glM : m00 [0]
         // b	m12 : glM : m01 [1]
@@ -26,10 +21,10 @@ class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        const t = params.tra.transform;
+        const t = params.transform[this._k.transform];
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
 
-        for (let i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
+        for (let i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
             this.renderPoints(path);
         }

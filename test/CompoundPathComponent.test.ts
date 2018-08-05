@@ -1,9 +1,7 @@
 import { expect } from "chai";
-import { ComponentFactory } from "ecs-framework";
 import { mat4 } from "gl-matrix";
 import "mocha";
 import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
-import { pathType } from "../src/PathComponent";
 
 describe("Compound path component should ", () => {
     const defaultStyle: IPathStyle = {lineWidth: 1, strokeStyle: "black", lineCap: "butt", lineJoin: "miter"};
@@ -18,7 +16,7 @@ describe("Compound path component should ", () => {
 
     let myCPath: CompoundPathComponent;
     beforeEach(() => {
-        myCPath = new CompoundPathComponent(ID.next(), true, true, 0, 0, defaultStyle, mat4.create(), {from: 0, to: 1}, 0);
+        myCPath = new CompoundPathComponent(ID.next(), true, true, 0, 0, defaultStyle, mat4.create(), 0, 1, 0);
     });
 
     it("have a proprety that allow toggling visibility", () => {
@@ -60,10 +58,10 @@ describe("Compound path component should ", () => {
     it("holds information on percentage to draw", () => {
         const from = 0.5;
         const to = 0.75;
-        myCPath.trim.from = from;
-        myCPath.trim.to = to;
-        expect(myCPath.trim.from).to.equal(from);
-        expect(myCPath.trim.to).to.equal(to);
+        myCPath.trimFrom = from;
+        myCPath.trimTo = to;
+        expect(myCPath.trimFrom).to.equal(from);
+        expect(myCPath.trimTo).to.equal(to);
     });
     it("holds the total length of the compound path", () => {
         const length = 10;

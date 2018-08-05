@@ -2,35 +2,35 @@ import { ComponentFactory, System } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
 import { cubicBezierUtil } from "./BezierUtil";
-import { IPathStyle, IRange } from "./CompoundPathComponent";
+import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
-import { PathEntityFactory } from "./PathEntityFactory";
-import { PointComponent } from "./PointComponent";
 export { CompoundPathRendererSystem, ICompoundPathRendererParams };
 
 interface ICompoundPathRendererParams {
-    f: { firstPathId: number };
-    l: { length: number };
-    n: { nbPath: number };
-    s: { style: IPathStyle };
-    tra: { transform: mat4 };
-    tri: { trim: IRange };
+    firstPathId: number;
+    length: number;
+    nbPath: number;
+    style: IPathStyle;
+    transform: mat4;
+    trimFrom: number;
+    trimTo: number;
 }
 
 const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
-    f: { firstPathId: 0 },
-    l: { length: 0 },
-    n: { nbPath: 0 },
-    s: { style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" } },
-    tra: { transform: mat4.create() },
-    tri: { trim: {from: 0, to: 0} },
+    firstPathId: 0,
+    length: 0,
+    nbPath: 0,
+    style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" },
+    transform: mat4.create(),
+    trimFrom: 0,
+    trimTo: 0,
 };
 
 const nbAfterComa = 10000;
 class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
     public compoundPathEntityPool: CompoundPathEntityFactory;
-    protected _parameters: ICompoundPathRendererParams = defaultCompoundPathRendererParams;
+    protected _defaultParameter: ICompoundPathRendererParams = defaultCompoundPathRendererParams;
     constructor(public context: CanvasRenderingContext2D) { super(); }
     // iterate on a compoundPAth component
     // then iterate on all their paths
@@ -45,20 +45,20 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
         // d	m22 : glM : m11 [5]
         // e	m41 : glM : m30 [12]
         // f	m42 : glM : m31 [13]
-        const t = params.tra.transform;
+        const t = params.transform[this._k.transform];
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
 
         // Iterate paths of the compoundPath Component
-        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.f.firstPathId);
+        const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
 
         // const previousTrace = { point: undefined, type: pathType.polyline };
         let accumulatedLength = 0;
         let firstPathTraced = false;
         // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
-        const from = params.l.length * params.tri.trim.from;
+        const from = params.length[this._k.length] * params.trimFrom[this._k.trimFrom];
         // const to = Math.floor(param6.length * param5.trim.to * nbAfterComa) / nbAfterComa;
-        const to = params.l.length * params.tri.trim.to;
-        for (let i = firstPathIndex; i < firstPathIndex + params.n.nbPath; ++i) {
+        const to = params.length[this._k.length] * params.trimTo[this._k.trimTo];
+        for (let i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
 
             accumulatedLength += path.length;
@@ -70,7 +70,7 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
                 // When trim begin on this path but end on a next path. or end on this path because it's the last one
                 const normFrom = this.normalFrom(accumulatedLength, path.length, from);
                 const normTo = 1;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo );
                 firstPathTraced = true;
             } else if (accumulatedLength >= to && !firstPathTraced) {
                 // When trim begin and end on the same path
@@ -78,7 +78,7 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
                 // from from the begining of this path in normalized form
                 const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
                 const normTo = (path.length - to) / path.length;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo);
                 firstPathTraced = true;
                 break;
             } else if (accumulatedLength >= to && firstPathTraced) {
@@ -86,15 +86,15 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
 
                 const normFrom = 0;
                 const normTo = 1 - (accumulatedLength - to) / path.length;
-                this.trace(path, { from: normFrom, to: normTo });
+                this.trace(path, normFrom, normTo );
                 break;
             }
         }
 
-        this.context.lineWidth = params.s.style.lineWidth;
-        this.context.lineCap = params.s.style.lineCap;
-        this.context.strokeStyle = params.s.style.strokeStyle;
-        this.context.lineJoin = params.s.style.lineJoin;
+        this.context.lineWidth = params.style[this._k.style].lineWidth;
+        this.context.lineCap = params.style[this._k.style].lineCap;
+        this.context.strokeStyle = params.style[this._k.style].strokeStyle;
+        this.context.lineJoin = params.style[this._k.style].lineJoin;
         this.context.stroke();
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -106,13 +106,13 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
         const l = (pathLength - (accumulatedLength - from)) / pathLength;
         return (l < 0) ? 0 : l;
     }
-    protected trace(path: PathComponent, trim: IRange) {
+    protected trace(path: PathComponent, trimFrom: number, trimTo: number) {
         switch (path.type) {
             case pathType.polyline:
-                this.tracePolyLine(path, trim);
+                this.tracePolyLine(path, trimFrom, trimTo);
                 break;
             case pathType.cubicBezier:
-                this.traceCubicBezier(path, trim);
+                this.traceCubicBezier(path, trimFrom, trimTo);
                 break;
             default:
                 break;
@@ -121,9 +121,9 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
     /**
      * lineTo points of pathComponent
      */
-    protected tracePolyLine(path: PathComponent, trim = { from: 0, to: 1 }) {
+    protected tracePolyLine(path: PathComponent, trimFrom: number = 0, trimTo: number = 1 ) {
 
-        if (trim.from === 0 && trim.to === 1) {
+        if (trimFrom === 0 && trimTo === 1) {
             const firstPtIndex = this.compoundPathEntityPool.pathEntityFactory.getFirstPointIndex(path);
             const pool = this.compoundPathEntityPool.pathEntityFactory.pointPool.values;
 
@@ -135,7 +135,7 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
             }
         } else {
             const out: vec2[] = [];
-            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trimFrom, trimTo, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             for (let j = 1; j < out.length; ++j) {
                 this.context.lineTo(out[j][CONF.X], out[j][CONF.Y]);
@@ -143,11 +143,11 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
         }
     }
 
-    protected traceCubicBezier(path: PathComponent, trim = { from: 0, to: 1 }) {
+    protected traceCubicBezier(path: PathComponent, trimFrom: number = 0, trimTo: number = 1 ) {
         // trim
-        if (trim.from !== 0 || trim.to !== 1) {
+        if (trimFrom !== 0 || trimTo !== 1) {
             const out: vec2[] = [];
-            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trim, out);
+            this.compoundPathEntityPool.pathEntityFactory.trimPath(path, trimFrom, trimTo, out);
             this.context.moveTo(out[0][CONF.X], out[0][CONF.Y]);
             this.context.bezierCurveTo(out[1][CONF.X], out[1][CONF.Y], out[2][CONF.X], out[2][CONF.Y], out[3][CONF.X], out[3][CONF.Y]);
         } else {

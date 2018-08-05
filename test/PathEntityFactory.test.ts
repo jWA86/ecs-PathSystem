@@ -182,7 +182,7 @@ describe("PathEntityFactory ", () => {
                 const path = entityFactory.createPathComponent(1, 1, 3, pathType.polyline);
 
                 const out: vec2[] = [];
-                entityFactory.trimPolyline(entityFactory.getPathComponent(1), { from: 0.10, to: 0.30 }, out);
+                entityFactory.trimPolyline(entityFactory.getPathComponent(1), 0.10, 0.30, out);
 
                 // since from and to ended on the same segment
                 // it should return only one segment (2 points)
@@ -216,7 +216,7 @@ describe("PathEntityFactory ", () => {
                 const res = entityFactory.createPathComponent(1, 1, 4, pathType.polyline);
 
                 const out: vec2[] = [];
-                entityFactory.trimPolyline(entityFactory.getPathComponent(1), { from: 0.1, to: 0.9 }, out);
+                entityFactory.trimPolyline(entityFactory.getPathComponent(1), 0.1, 0.9, out);
 
                 expect(out.length).to.equal(4);
 
