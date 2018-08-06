@@ -31,14 +31,13 @@ describe("Trace", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
+        renderSys = new CompoundPathRendererSystem(ctx, cPool);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
         renderSys.setParamSource("*", cPool.componentPool);
-        renderSys.compoundPathEntityPool = cPool;
 
         mouseC = new MouseComponent(1, true, vec2.fromValues(0.0, 0.0), false);
     });

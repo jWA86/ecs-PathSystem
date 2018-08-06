@@ -18,7 +18,7 @@ declare class CompoundPathRendererSystem extends System<ICompoundPathRendererPar
     context: CanvasRenderingContext2D;
     compoundPathEntityPool: CompoundPathEntityFactory;
     protected _defaultParameter: ICompoundPathRendererParams;
-    constructor(context: CanvasRenderingContext2D);
+    constructor(context: CanvasRenderingContext2D, compoundPathEntityPool: CompoundPathEntityFactory);
     execute(params: ICompoundPathRendererParams): void;
     normalFrom(accumulatedLength: number, pathLength: number, from: number): number;
     protected trace(path: PathComponent, trimFrom: number, trimTo: number): void;

@@ -1,5 +1,6 @@
 import { mat4 , vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
+import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "./CompoundPathRenderSystem";
 import { PathComponent} from "./PathComponent";
 
@@ -7,8 +8,8 @@ export { DebugCompoundPathRendererSystem };
 
 /** Render all controls point of paths from a CompoundPath component */
 class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem {
-    constructor(context: CanvasRenderingContext2D, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
-        super(context);
+    constructor(context: CanvasRenderingContext2D, compoundPathEntityPool: CompoundPathEntityFactory, public style: { radius: number, fillStyle: string | CanvasGradient | CanvasPattern, lineWidth: number, strokeStyle: string | CanvasGradient | CanvasPattern } = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }) {
+        super(context, compoundPathEntityPool);
     }
 
     public execute(params: ICompoundPathRendererParams) {

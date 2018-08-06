@@ -1,16 +1,12 @@
 import { expect } from "chai";
-import { ComponentFactory } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import "mocha";
-import { CompoundPathComponent, IPathStyle } from "../src/CompoundPathComponent";
 import { CompoundPathEntityFactory } from "../src/CompoundPathEntityFactory";
-import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "../src/CompoundPathRenderSystem";
+import { CompoundPathRendererSystem } from "../src/CompoundPathRenderSystem";
 import { X, Y } from "../src/config";
-import { DebugCompoundPathRendererSystem } from "../src/DebugCompoundPathRenderSystem";
-import { PathComponent, pathType } from "../src/PathComponent";
+import { pathType } from "../src/PathComponent";
 import { PathEntityFactory } from "../src/PathEntityFactory";
-import { PointComponent } from "../src/PointComponent";
-import { getPointOnCubicBezier, refImgPixelColorChecking, samplePath } from "./CanvasTestHelper";
+import { refImgPixelColorChecking, samplePath } from "./CanvasTestHelper";
 describe("Renderer", () => {
     // mocking canvas
     const canvasId = "canvas";
@@ -43,14 +39,13 @@ describe("Renderer", () => {
         bufferPathFactory = new PathEntityFactory(1000, 100);
         canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         ctx = canvas.getContext("2d");
-        renderSys = new CompoundPathRendererSystem(ctx);
         cPool = new CompoundPathEntityFactory(10, 100, 1000);
+        renderSys = new CompoundPathRendererSystem(ctx, cPool);
         cPool.defaultStyle.lineWidth = 5;
         cPool.defaultStyle.strokeStyle = "red";
         cPool.defaultStyle.lineCap = "square";
 
         renderSys.setParamSource("*", cPool.componentPool);
-        renderSys.compoundPathEntityPool = cPool;
     });
 
     describe("polyline path", () => {

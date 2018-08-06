@@ -1,7 +1,6 @@
 import { ComponentFactory, System } from "ecs-framework";
 import { mat4, vec2 } from "gl-matrix";
 import * as CONF from "../src/config";
-import { cubicBezierUtil } from "./BezierUtil";
 import { IPathStyle } from "./CompoundPathComponent";
 import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { PathComponent, pathType } from "./PathComponent";
@@ -24,14 +23,13 @@ const defaultCompoundPathRendererParams: ICompoundPathRendererParams = {
     style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" },
     transform: mat4.create(),
     trimFrom: 0,
-    trimTo: 0,
+    trimTo: 1,
 };
 
 const nbAfterComa = 10000;
 class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
-    public compoundPathEntityPool: CompoundPathEntityFactory;
     protected _defaultParameter: ICompoundPathRendererParams = defaultCompoundPathRendererParams;
-    constructor(public context: CanvasRenderingContext2D) { super(); }
+    constructor(public context: CanvasRenderingContext2D, public compoundPathEntityPool: CompoundPathEntityFactory) { super(); }
     // iterate on a compoundPAth component
     // then iterate on all their paths
     // finally iterate on points for rendering

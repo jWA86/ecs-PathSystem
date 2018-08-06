@@ -1,5 +1,6 @@
 /// <reference types="gl-matrix" />
 import { vec2 } from "gl-matrix";
+import { CompoundPathEntityFactory } from "./CompoundPathEntityFactory";
 import { CompoundPathRendererSystem, ICompoundPathRendererParams } from "./CompoundPathRenderSystem";
 import { PathComponent } from "./PathComponent";
 export { DebugCompoundPathRendererSystem };
@@ -11,7 +12,7 @@ declare class DebugCompoundPathRendererSystem extends CompoundPathRendererSystem
         lineWidth: number;
         strokeStyle: string | CanvasGradient | CanvasPattern;
     };
-    constructor(context: CanvasRenderingContext2D, style?: {
+    constructor(context: CanvasRenderingContext2D, compoundPathEntityPool: CompoundPathEntityFactory, style?: {
         radius: number;
         fillStyle: string | CanvasGradient | CanvasPattern;
         lineWidth: number;

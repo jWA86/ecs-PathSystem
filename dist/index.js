@@ -513,14 +513,15 @@ var defaultCompoundPathRendererParams = {
     style: { lineWidth: 1, strokeStyle: "black", lineCap: "square", lineJoin: "miter" },
     transform: gl_matrix_1.mat4.create(),
     trimFrom: 0,
-    trimTo: 0,
+    trimTo: 1,
 };
 var nbAfterComa = 10000;
 var CompoundPathRendererSystem = /** @class */ (function (_super) {
     __extends(CompoundPathRendererSystem, _super);
-    function CompoundPathRendererSystem(context) {
+    function CompoundPathRendererSystem(context, compoundPathEntityPool) {
         var _this = _super.call(this) || this;
         _this.context = context;
+        _this.compoundPathEntityPool = compoundPathEntityPool;
         _this._defaultParameter = defaultCompoundPathRendererParams;
         return _this;
     }
@@ -863,9 +864,9 @@ var CompoundPathRenderSystem_1 = __webpack_require__(8);
 /** Render all controls point of paths from a CompoundPath component */
 var DebugCompoundPathRendererSystem = /** @class */ (function (_super) {
     __extends(DebugCompoundPathRendererSystem, _super);
-    function DebugCompoundPathRendererSystem(context, style) {
+    function DebugCompoundPathRendererSystem(context, compoundPathEntityPool, style) {
         if (style === void 0) { style = { radius: CONF.DEBUG.RADIUS, fillStyle: CONF.DEBUG.FILLSTYLE, lineWidth: CONF.DEBUG.LINEWITH, strokeStyle: CONF.DEBUG.STROKESTYLE }; }
-        var _this = _super.call(this, context) || this;
+        var _this = _super.call(this, context, compoundPathEntityPool) || this;
         _this.style = style;
         return _this;
     }
