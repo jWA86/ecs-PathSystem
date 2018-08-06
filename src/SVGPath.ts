@@ -61,6 +61,7 @@ const svgPathUtil = {
         const res = compoundFactory.create(entityId);
         res.firstPathId = firstPathId;
         res.nbPath = nbPath;
+        compoundFactory.setLenght(res);
         return res;
     },
 

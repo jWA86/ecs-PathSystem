@@ -60,7 +60,11 @@ describe("SVG path", () => {
                 expect(pointPool.values[i].point[1]).to.equal(absPointPath1[j][1]);
                 j += 1;
             }
-
+            console.log(res.length);
+        });
+        it("should compute the length of the path while converting it to an entity", () => {
+            const res = svgPathUtil.parseSVGPath(1, relativeSVGPath1, cPool);
+            expect(res.length, "compoundPath length is not computed").to.be.greaterThan(0);
         });
     });
     describe("Import group of path", () => {});
