@@ -970,6 +970,7 @@ var svgPathUtil = {
         var res = compoundFactory.create(entityId);
         res.firstPathId = firstPathId;
         res.nbPath = nbPath;
+        compoundFactory.setLenght(res);
         return res;
     },
     /** Parse a Move command,
