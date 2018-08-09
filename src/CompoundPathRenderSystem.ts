@@ -49,13 +49,13 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
         // Iterate paths of the compoundPath Component
         const firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
 
-        // const previousTrace = { point: undefined, type: pathType.polyline };
         let accumulatedLength = 0;
         let firstPathTraced = false;
-        // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
+
         const from = params.length[this._k.length] * params.trimFrom[this._k.trimFrom];
-        // const to = Math.floor(param6.length * param5.trim.to * nbAfterComa) / nbAfterComa;
+
         const to = params.length[this._k.length] * params.trimTo[this._k.trimTo];
+
         for (let i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             const path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
 
@@ -75,13 +75,13 @@ class CompoundPathRendererSystem extends System<ICompoundPathRendererParams> {
 
                 // from from the begining of this path in normalized form
                 const normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
-                const normTo = (path.length - to) / path.length;
+                const normTo = to / path.length;
+                // console.log("trace normFrom : " + normFrom + " norm to :" + normTo);
                 this.trace(path, normFrom, normTo);
                 firstPathTraced = true;
                 break;
             } else if (accumulatedLength >= to && firstPathTraced) {
                 // When trim begin on a previous path and end on this one
-
                 const normFrom = 0;
                 const normTo = 1 - (accumulatedLength - to) / path.length;
                 this.trace(path, normFrom, normTo );

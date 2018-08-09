@@ -540,12 +540,9 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
         this.context.setTransform(t[CONF.SCALE_X], t[CONF.SKEW_X], t[CONF.SKEW_Y], t[CONF.SCALE_Y], t[CONF.TRANSLATE_X], t[CONF.TRANSLATE_Y]);
         // Iterate paths of the compoundPath Component
         var firstPathIndex = this.compoundPathEntityPool.pathEntityFactory.pathPool.keys.get(params.firstPathId[this._k.firstPathId]);
-        // const previousTrace = { point: undefined, type: pathType.polyline };
         var accumulatedLength = 0;
         var firstPathTraced = false;
-        // const from = Math.floor(param6.length * param5.trim.from * nbAfterComa) / nbAfterComa;
         var from = params.length[this._k.length] * params.trimFrom[this._k.trimFrom];
-        // const to = Math.floor(param6.length * param5.trim.to * nbAfterComa) / nbAfterComa;
         var to = params.length[this._k.length] * params.trimTo[this._k.trimTo];
         for (var i = firstPathIndex; i < firstPathIndex + params.nbPath[this._k.nbPath]; ++i) {
             var path = this.compoundPathEntityPool.pathEntityFactory.pathPool.values[i];
@@ -565,7 +562,8 @@ var CompoundPathRendererSystem = /** @class */ (function (_super) {
                 // When trim begin and end on the same path
                 // from from the begining of this path in normalized form
                 var normFrom = (from === 0) ? 0 : (from - path.length) / path.length;
-                var normTo = (path.length - to) / path.length;
+                var normTo = to / path.length;
+                // console.log("trace normFrom : " + normFrom + " norm to :" + normTo);
                 this.trace(path, normFrom, normTo);
                 firstPathTraced = true;
                 break;

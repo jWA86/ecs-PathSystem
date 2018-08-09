@@ -497,6 +497,7 @@ describe("Renderer", () => {
                     cp1.trimFrom = 0;
                     const percentTrimTo = (p1Length + p2Length / 2) / cp1.length;
                     cp1.trimTo = percentTrimTo;
+
                     cp1.trimFrom = 0;
 
                     renderSys.process();
@@ -602,6 +603,46 @@ describe("Renderer", () => {
                     samplePath({ from: 0, to: 1 }, 5, cubicBezierPts3, pathType.cubicBezier, (pt) => {
                         const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
                         refImgPixelColorChecking(data, 0, 0, 0, 0);
+                    });
+                });
+                it("render at exact half of the compound path should render only the first path", () => {
+                    const cId = 1;
+
+                    bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                    bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+
+                    cp1.trimFrom = 0;
+                    cp1.trimTo = 0.5;
+                    renderSys.process();
+
+                    // path1
+                    samplePath({ from: 0, to: 0.5 }, 5, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+                });
+                it("trimFrom = 0 & trimTo = 1 should render fully the compound path",  () => {
+                    const cId = 1;
+
+                    bufferPathFactory.create(1, cubicBezierPts1, pathType.cubicBezier);
+                    bufferPathFactory.create(2, cubicBezierPts2, pathType.cubicBezier);
+
+                    const cp1 = cPool.createFromPaths(cId, bufferPathFactory, [1, 2]);
+
+                    cp1.trimFrom = 0;
+                    cp1.trimTo = 1;
+                    renderSys.process();
+
+                    samplePath({ from: 0, to: 1 }, 10, cubicBezierPts1, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
+                    });
+
+                    samplePath({ from: 0, to: 1 }, 10, cubicBezierPts2, pathType.cubicBezier, (pt) => {
+                        const data = ctx.getImageData(pt[X], pt[Y], 1, 1);
+                        refImgPixelColorChecking(data, 255, 0, 0, 255);
                     });
                 });
             });
